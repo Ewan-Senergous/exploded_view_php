@@ -1,0 +1,6 @@
+{
+  "intelephense.environment.includePaths": [
+    "vendor/wordpress/wordpress",
+    "vendor/woocommerce/woocommerce"
+  ]
+}

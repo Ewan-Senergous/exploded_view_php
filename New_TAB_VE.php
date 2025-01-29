@@ -8,6 +8,15 @@ if (!function_exists('add_vue_eclatee_tab')) {
         );
         return $tabs;
     }
+
+    // function add_vue_eclatee_tab($tabs) {
+    //     $tabs['vue_eclatee_tab'] = array(
+    //         'title'    => __('Vue Éclatée', 'woocommerce'),
+    //         'priority' => 5,
+    //         'callback' => 'display_vue_eclatee_content'
+    //     );
+    //     return $tabs;
+    // }
     
     function display_vue_eclatee_content() {
         global $product;

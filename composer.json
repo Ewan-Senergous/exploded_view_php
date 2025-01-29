@@ -1,0 +1,12 @@
+{
+    "require": {
+        "johnpbloch/wordpress": "^6.7",
+        "woocommerce/woocommerce": "^3.5"
+    },
+    "config": {
+        "allow-plugins": {
+            "johnpbloch/wordpress-core-installer": true,
+            "composer/installers": true
+        }
+    }
+}
