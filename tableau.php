@@ -108,6 +108,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
     wc_get_cart_url()
 );
                 }
+                
             }
 
             $output .= '<script>
