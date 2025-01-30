@@ -20,13 +20,13 @@ if (!function_exists('add_vue_eclatee_tab')) {
         
         // Colonne gauche
         echo '<div style="flex: 1;">';
-        echo '<img src="https://www.service-er.de/public/media/E885.svgz" alt="Vue éclatée" style="max-width: 100%; height: auto;">';
+        echo '<div class="zoom-container">';
+        echo do_shortcode('[zoom_ve]');
+        echo '</div>';
         echo '</div>';
         
         // Colonne droite
         echo '<div style="flex: 1;">';
-        
-        // Ajout de la pagination
         echo do_shortcode('[xyz-ips snippet="paginationVueEclatee"]');
         
         // Récupération et affichage du tableau avec SKU

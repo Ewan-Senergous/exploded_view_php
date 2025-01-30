@@ -9,11 +9,15 @@ if (!function_exists('zoom_ve_function')) {
                 overflow: hidden;
                 width: 100%;
                 max-width: 1200px;
+                cursor: grab;
+                background: #f5f5f5;
+                border: 1px solid #ddd;
             }
             .zoom-image {
                 width: 100%;
                 height: auto;
                 transform-origin: 0 0;
+                pointer-events: none;
             }
             .zoom-controls {
                 position: relative; 
@@ -23,7 +27,7 @@ if (!function_exists('zoom_ve_function')) {
                 border-radius: 5px;
                 text-align: center;
                 width: 50%; 
-                margin-left: auto; /* Centrage horizontal */
+                margin-left: auto;
                 margin-right: auto;
             }
             .zoom-button {
@@ -33,7 +37,7 @@ if (!function_exists('zoom_ve_function')) {
                 margin: 0 3px; 
                 cursor: pointer;
                 border-radius: 3px;
-                min-width: 30px; 
+                min-width: 30px;
             }
         </style>
 
@@ -59,6 +63,8 @@ if (!function_exists('zoom_ve_function')) {
             const image = document.getElementById('zoomImage');
             let isDragging = false;
             let startX, startY, translateX = 0, translateY = 0;
+            let lastX, lastY;
+            let momentum = { x: 0, y: 0 };
 
             function updateTransform() {
                 image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
@@ -106,19 +112,32 @@ if (!function_exists('zoom_ve_function')) {
                 isDragging = true;
                 startX = e.clientX - translateX;
                 startY = e.clientY - translateY;
+                lastX = e.clientX;
+                lastY = e.clientY;
                 container.style.cursor = 'grabbing';
+                e.preventDefault();
             });
 
             window.addEventListener('mousemove', function(e) {
                 if (!isDragging) return;
+                
                 translateX = e.clientX - startX;
                 translateY = e.clientY - startY;
+                
+                lastX = e.clientX;
+                lastY = e.clientY;
+                
                 updateTransform();
             });
 
             window.addEventListener('mouseup', function() {
                 isDragging = false;
                 container.style.cursor = 'grab';
+            });
+
+            // Empêcher le glisser-déposer par défaut de l'image
+            container.addEventListener('dragstart', function(e) {
+                e.preventDefault();
             });
 
             function zoomIn() {
