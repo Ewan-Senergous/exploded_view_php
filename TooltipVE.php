@@ -138,34 +138,35 @@ document.addEventListener('DOMContentLoaded', function() {
         image: zoomImage?.getBoundingClientRect()
     });
     
-    // Fonction pour calculer le facteur d'échelle
+    // Fonction modifiée pour calculer le facteur d'échelle et la translation
     function calculateScale() {
         const imageRect = zoomImage.getBoundingClientRect();
+        const transform = window.getComputedStyle(zoomImage).transform;
+        const matrix = new DOMMatrixReadOnly(transform);
+        
         return {
             scaleX: imageRect.width / SVG_WIDTH,
-            scaleY: imageRect.height / SVG_HEIGHT
+            scaleY: imageRect.height / SVG_HEIGHT,
+            translateX: matrix.e || 0,
+            translateY: matrix.f || 0,
+            zoom: window.scale || 1
         };
     }
 
-    // Fonction pour mettre à jour les positions des points
+    // Fonction modifiée pour mettre à jour les positions des points
     function updatePointPositions() {
-        const scale = calculateScale();
-        console.log('Facteurs d\'échelle:', scale);
+        const transforms = calculateScale();
 
         document.querySelectorAll('.piece-hover').forEach(point => {
             const originalX = parseFloat(point.getAttribute('data-original-x'));
             const originalY = parseFloat(point.getAttribute('data-original-y'));
             
-            const scaledX = originalX * scale.scaleX;
-            const scaledY = originalY * scale.scaleY;
+            const scaledX = (originalX * transforms.scaleX * transforms.zoom) + transforms.translateX;
+            const scaledY = (originalY * transforms.scaleY * transforms.zoom) + transforms.translateY;
             
-            point.style.left = `${scaledX}px`;
-            point.style.top = `${scaledY}px`;
-            
-            console.log(`Point ${point.getAttribute('data-position')} scaled:`, {
-                original: {x: originalX, y: originalY},
-                scaled: {x: scaledX, y: scaledY}
-            });
+            point.style.transform = `translate(${scaledX}px, ${scaledY}px) scale(${transforms.zoom})`;
+            point.style.left = '0';
+            point.style.top = '0';
         });
     }
 
@@ -225,6 +226,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 scaled: {x, y},
                 scale
             });
+        });
+
+        // Ajouter un écouteur pour la mise à jour des points lors du zoom
+        const originalUpdateTransform = window.updateTransform;
+        window.updateTransform = function() {
+            if (originalUpdateTransform) originalUpdateTransform();
+            requestAnimationFrame(updatePointPositions);
+        };
+
+        // Observer les changements de style de l'image
+        const observer = new MutationObserver(() => {
+            requestAnimationFrame(updatePointPositions);
+        });
+
+        observer.observe(zoomImage, {
+            attributes: true,
+            attributeFilter: ['style']
+        });
+
+        // Mettre à jour lors du redimensionnement de la fenêtre
+        window.addEventListener('resize', () => {
+            requestAnimationFrame(updatePointPositions);
         });
     }
 });

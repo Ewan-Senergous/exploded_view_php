@@ -22,6 +22,7 @@ if (!function_exists('add_vue_eclatee_tab')) {
         echo '<div style="flex: 1;">';
         echo do_shortcode('[zoom_ve]');
         echo do_shortcode('[tooltip_ve]');
+        echo do_shortcode('[clickShowProducts]');
         echo '<div class="zoom-container">';
         echo '</div>';
         echo '</div>';
