@@ -24,17 +24,18 @@ if (!function_exists('pagination_vue_eclatee_test')) {
         $current_page = isset($_GET['vue_page']) ? max(1, min($total_pages, intval($_GET['vue_page']))) : 1;
         
         // Construction de la pagination
-        $output = '<div class="pagination-container" style="margin: 20px 0; text-align: center;">';
+        $output = '<div class="pagination-container" style="margin-bottom: 5px; text-align: center;">';
         
         // Style CSS
         $output .= '<style>
             .pagination-container {
                 font-family: "Poppins", sans-serif;
+                font-size: 18px;
             }
             .pagination-button {
                 display: inline-block;
-                padding: 8px 15px;
-                margin: 0 5px;
+                padding: 13px 20px;
+                margin: 5px;
                 background: #0056B3;
                 color: white !important;
                 text-decoration: none;

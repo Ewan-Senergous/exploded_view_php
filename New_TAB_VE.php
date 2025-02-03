@@ -20,14 +20,14 @@ if (!function_exists('add_vue_eclatee_tab')) {
         
         // Colonne gauche
         echo '<div style="flex: 1;">';
-        echo '<div class="zoom-container">';
         echo do_shortcode('[zoom_ve]');
+        echo do_shortcode('[tooltip_ve]');
+        echo '<div class="zoom-container">';
         echo '</div>';
         echo '</div>';
         
         // Colonne droite
         echo '<div style="flex: 1;">';
-        echo do_shortcode('[xyz-ips snippet="paginationVueEclatee"]');
         
         // Récupération et affichage du tableau avec SKU
         $sku = $product->get_sku();
