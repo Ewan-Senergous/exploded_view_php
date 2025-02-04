@@ -10,8 +10,6 @@ $svg_content = gzdecode($svg_content);
 
 $positions = [];
 
-echo "<script>console.log('Analyse du SVG pour positions 1-10...');</script>";
-
 // Regex modifiée pour chercher spécifiquement les IDs de 1 à 10
 $pattern = '/<text id="([1-9]|10)" transform="matrix\(1 0 0 1 ([0-9.-]+) ([0-9.-]+)\)">/';
 
@@ -24,19 +22,11 @@ $positions[$number] = [
 'x' => $x,
 'y' => $y
 ];
-
-echo "<script>console.log('Position $number trouvée:', {
-x: $x,
-y: $y,
-raw: " . json_encode($matches[0][$i]) . "
-});</script>";
 }
 }
 
 // Trier les positions par numéro pour s'assurer de l'ordre 1-10
 ksort($positions);
-
-echo "<script>console.log('Positions 1-10 trouvées:', " . json_encode($positions) . ");</script>";
 
 return $positions;
 }
@@ -200,12 +190,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Dimensions originales du SVG
     const SVG_WIDTH = 718.949;
     const SVG_HEIGHT = 493.722;
-    
-    // Debug initial
-    console.log('Debug conteneur et image:', {
-        container: zoomContainer?.getBoundingClientRect(),
-        image: zoomImage?.getBoundingClientRect()
-    });
     
     // Fonction modifiée pour calculer le facteur d'échelle et la translation
     function calculateScale() {
