@@ -5,9 +5,16 @@ if (!function_exists('clickShowProducts_function')) {
         ?>
         <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Fonction pour réinitialiser tous les points
+            function resetAllPoints() {
+                document.querySelectorAll('.piece-hover').forEach(point => {
+                    point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+                    point.style.borderColor = 'rgba(255, 0, 0, 5)';
+                });
+            }
+
             // Fonction pour ouvrir l'accordéon correspondant à la position
             function openAccordionForPosition(position) {
-                // Soustraire 1 car les index commencent à 0 mais les positions à 1
                 const index = position - 1;
                 const accordionContent = document.getElementById(`accordion-${index}`);
                 const accordionHeader = accordionContent?.previousElementSibling;
@@ -27,6 +34,14 @@ if (!function_exists('clickShowProducts_function')) {
 
                     // Faire défiler jusqu'à l'accordéon
                     accordionHeader.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    // Changer la couleur du point correspondant
+                    resetAllPoints();
+                    const point = document.querySelector(`.piece-hover[data-position="${position}"]`);
+                    if (point) {
+                        point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
+                        point.style.borderColor = 'rgba(0, 86, 179, 5)';
+                    }
                 }
             }
 
@@ -36,6 +51,19 @@ if (!function_exists('clickShowProducts_function')) {
                     const position = this.getAttribute('data-position');
                     if (position) {
                         openAccordionForPosition(parseInt(position));
+                    }
+                });
+            });
+
+            // Ajouter l'écouteur de clic sur les en-têtes d'accordéon
+            document.querySelectorAll('.accordion-header').forEach((header, index) => {
+                header.addEventListener('click', function() {
+                    const position = index + 1;
+                    resetAllPoints();
+                    const point = document.querySelector(`.piece-hover[data-position="${position}"]`);
+                    if (point) {
+                        point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
+                        point.style.borderColor = 'rgba(0, 86, 179, 5)';
                     }
                 });
             });

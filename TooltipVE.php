@@ -68,16 +68,16 @@ $data = json_decode(preg_replace('/\s+/', ' ', $cross_ref), true);
 .piece-hover {
 position: absolute;
 cursor: pointer;
-width: 15px;
-height: 15px;
-background-color: rgba(255, 0, 0, 0.5);
-border: 2px solid rgba(255, 0, 0, 0.8);
+width: 25px; 
+height: 25px; 
+background-color: rgba(255, 0, 0, 0.3);
+border: 3px solid rgba(255, 0, 0, 5); 
 border-radius: 50%;
 transform-origin: center;
 pointer-events: all;
 z-index: 1000;
-margin-left: -7.5px;
-margin-top: -7.5px;
+margin-left: -7.5px; 
+margin-top: -15.5px; 
 }
 
 .popover-content {

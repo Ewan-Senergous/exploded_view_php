@@ -16,7 +16,7 @@ if (!function_exists('add_vue_eclatee_tab')) {
         
         echo '<div style="display: flex; gap: 15px; align-items: flex-start;">';
         
-        echo '<div style="flex: 6;">';  
+        echo '<div style="flex: 7;">';  
         echo do_shortcode('[zoom_ve]');
         echo do_shortcode('[tooltip_ve]');
         echo do_shortcode('[clickShowProducts]');
@@ -31,6 +31,7 @@ if (!function_exists('add_vue_eclatee_tab')) {
         
         echo '</div>';
         echo '</div>';
+        
     }
     
     add_filter('woocommerce_product_tabs', 'add_vue_eclatee_tab');
