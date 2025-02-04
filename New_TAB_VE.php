@@ -16,7 +16,7 @@ if (!function_exists('add_vue_eclatee_tab')) {
         
         echo '<div style="display: flex; gap: 15px; align-items: flex-start;">';
         
-        echo '<div style="flex: 2;">';  
+        echo '<div style="flex: 6;">';  
         echo do_shortcode('[zoom_ve]');
         echo do_shortcode('[tooltip_ve]');
         echo do_shortcode('[clickShowProducts]');
@@ -24,7 +24,7 @@ if (!function_exists('add_vue_eclatee_tab')) {
         echo '</div>';
         echo '</div>';
         
-        echo '<div style="flex: 1;">'; 
+        echo '<div style="flex: 4;">'; 
         $sku = $product->get_sku();
         echo do_shortcode('[xyz-ips snippet="TestEwan" cross_ref_sku="' . $sku . '"]');
         echo '</div>';

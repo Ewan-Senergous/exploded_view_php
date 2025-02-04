@@ -83,7 +83,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                         <div id="accordion-%d" class="accordion-content %s">
                             <div style="background:white;padding:20px;border-radius:5px">
                                 %s
-                                <div style="display:flex;justify-content:flex-end;align-items:start;gap:15px;margin-top:20px">
+                                <div style="display:flex;justify-content:flex-start;align-items:start;gap:15px;margin-top:20px">
                                     <div style="display:flex;align-items:center;gap:10px">
                                         <label style="color:#2c5282">Quantité :</label>
                                         <div style="display:flex;align-items:center">
