@@ -79,48 +79,117 @@ z-index: 1000;
 margin-left: -7.5px;
 margin-top: -7.5px;
 }
-.tooltip-content {
+
+.popover-content {
 display: none;
 position: absolute;
-left: 25px;
-top: 0;
+left: calc(100% + 5px); /* Réduit de 10px à 5px */
+top: 50%;
+transform: translateY(-50%);
 background: white;
-border: 1px solid #ddd;
-padding: 10px;
-border-radius: 5px;
-box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+padding: 15px;
+border-radius: 8px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 z-index: 1001;
-min-width: 200px;
+width: 280px;
+border: 1px solid #e2e8f0;
+pointer-events: auto; /* Permet l'interaction avec le contenu */
 }
-.piece-hover:hover .tooltip-content {
+
+/* Modification pour permettre l'interaction avec le popover */
+.piece-hover:hover .popover-content,
+.popover-content:hover {
 display: block;
 }
-.tooltip-content p {
+
+.popover-content::before {
+content: '';
+position: absolute;
+left: -6px;
+top: 50%;
+transform: translateY(-50%);
+border-style: solid;
+border-width: 6px 6px 6px 0;
+border-color: transparent white transparent transparent;
+pointer-events: none;
+}
+
+/* Ajout d'une zone tampon pour maintenir le hover */
+.piece-hover::after {
+content: '';
+position: absolute;
+width: 30px; /* Augmenté de 20px à 30px */
+height: 120%; /* Augmenté à 120% pour plus de marge */
+right: -15px; /* Ajusté pour centrer la zone tampon */
+top: -10%; /* Décalé vers le haut pour compenser la hauteur augmentée */
+}
+
+/* Ajout d'une zone tampon à gauche du popover */
+.popover-content::after {
+content: '';
+position: absolute;
+width: 15px;
+height: 120%;
+left: -15px;
+top: -10%;
+}
+
+.popover-title {
+color: #2c5282;
+font-weight: 600;
+margin-bottom: 10px;
+font-size: 14px;
+}
+
+.popover-content p {
 margin: 5px 0;
-color: #333;
+font-size: 13px;
+color: #4a5568;
 }
-.quantity-section {
-margin-top: 10px;
+
+.quantity-controls {
+display: flex;
+align-items: center;
+gap: 8px;
+margin: 12px 0;
 }
-.quantity-section button {
-padding: 2px 8px;
-margin: 0 5px;
+
+.quantity-controls button {
+background: #f7fafc;
+border: 1px solid #e2e8f0;
+padding: 4px 8px;
 cursor: pointer;
+border-radius: 4px;
 }
+
 .quantity-input {
-width: 50px;
+width: 40px;
 text-align: center;
+border: 1px solid #e2e8f0;
+border-radius: 4px;
+padding: 3px;
 }
-.add-to-cart {
-margin-top: 5px;
-padding: 5px 10px;
-background-color: #4CAF50;
+
+.add-to-cart-btn-1 {
+width: 100%;
+background: #FF5733;
 color: white;
+padding: 8px;
 border: none;
-border-radius: 3px;
+border-radius: 4px;
 cursor: pointer;
+font-weight: 500;
+font-size: 13px;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 6px;
+transition: background 0.3s;
 }
-/* Supprimer le style .origin-point */
+
+.add-to-cart-btn-1:hover {
+background: #FF774D;
+}
 </style>
 
 <script>
@@ -187,17 +256,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 point<?php echo $index; ?>.setAttribute('data-original-x', '<?php echo $position['x']; ?>');
                 point<?php echo $index; ?>.setAttribute('data-original-y', '<?php echo $position['y']; ?>');
                 point<?php echo $index; ?>.innerHTML = `
-                    <div class="tooltip-content">
-                        <p><strong>Position:</strong> <?php echo $position_number; ?></p>
-                        <p><strong>Nom du produit:</strong> <?php echo htmlspecialchars($item['Nom_produit']); ?></p>
-                        <p><strong>Référence:</strong> <?php echo htmlspecialchars($item['Ref_fabriquant']); ?></p>
-                        <div class="quantity-section">
-                            <label>Quantité : </label>
+                    <div class="popover-content">
+                        <div class="popover-title">Position <?php echo $position_number; ?></div>
+                        <p><strong><?php echo htmlspecialchars($item['Nom_produit']); ?></strong></p>
+                        <p>Réf: <?php echo htmlspecialchars($item['Ref_fabriquant']); ?></p>
+                        <div class="quantity-controls">
                             <button class="minus-btn">-</button>
                             <input type="number" value="1" min="1" class="quantity-input">
                             <button class="plus-btn">+</button>
-                            <button class="add-to-cart">Ajouter au panier</button>
                         </div>
+                        <button class="add-to-cart-btn-1">
+                            <svg width="14" height="14" viewBox="0 0 24 24" style="stroke:currentColor;fill:none; ;font-weight:bold; stroke-width:2">
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                            </svg>
+                            Ajouter au panier
+                        </button>
                     </div>
                 `;
                 zoomContainer.appendChild(point<?php echo $index; ?>);

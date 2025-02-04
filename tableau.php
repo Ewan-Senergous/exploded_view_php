@@ -83,7 +83,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                         <div id="accordion-%d" class="accordion-content %s">
                             <div style="background:white;padding:20px;border-radius:5px">
                                 %s
-                                <div style="display:flex;justify-content:flex-end;align-items:center;gap:15px;margin-top:20px">
+                                <div style="display:flex;justify-content:flex-end;align-items:start;gap:15px;margin-top:20px">
                                     <div style="display:flex;align-items:center;gap:10px">
                                         <label style="color:#2c5282">Quantité :</label>
                                         <div style="display:flex;align-items:center">
@@ -92,7 +92,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                                             <button onclick="this.previousElementSibling.stepUp()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:8px 12px;cursor:pointer">+</button>
                                         </div>
                                     </div>
-                                    <button onclick="ajouterAuPanier(\'%s\',%d)" class="add-to-cart-btn" style="color:white;padding:10px 20px;border:none;border-radius:5px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:8px">
+                                    <button onclick="ajouterAuPanier(\'%s\',%d)" class="add-to-cart-btn" style="color:white;padding:9px 8px;border:none;border-radius:5px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:8px">
                                         <svg width="16" height="16" viewBox="0 0 24 24" style="stroke:currentColor;fill:none;stroke-width:2"><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
                                         Ajouter au panier
                                     </button>

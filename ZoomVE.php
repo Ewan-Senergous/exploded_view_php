@@ -11,13 +11,17 @@ if (!function_exists('zoom_ve_function')) {
                 max-width: 1200px;
                 cursor: grab;
                 background: #f5f5f5;
+            }
+            .image-container {
                 border: 1px solid #ddd;
+                width: 100%;
             }
             .zoom-image {
                 width: 100%;
                 height: auto;
                 transform-origin: 0 0;
                 pointer-events: none;
+                display: block;
             }
             .zoom-controls {
                 position: relative; 
@@ -26,7 +30,7 @@ if (!function_exists('zoom_ve_function')) {
                 padding: 10px;
                 border-radius: 5px;
                 text-align: center;
-                width: 50%; 
+                width: 18rem; 
                 margin-left: auto;
                 margin-right: auto;
             }
@@ -43,7 +47,9 @@ if (!function_exists('zoom_ve_function')) {
 
         <div class="zoom-wrapper">
             <div class="zoom-container" id="zoomContainer">
-                <img src="https://www.service-er.de/public/media/E885.svgz" class="zoom-image" id="zoomImage">
+                <div class="image-container">
+                    <img src="https://www.service-er.de/public/media/E885.svgz" class="zoom-image" id="zoomImage">
+                </div>
             </div>
             <div class="zoom-controls">
                 <button class="zoom-button" onclick="zoomIn()">-</button>

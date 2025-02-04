@@ -12,14 +12,11 @@ if (!function_exists('add_vue_eclatee_tab')) {
     function display_vue_eclatee_content() {
         global $product;
         
-        // Suppression de cette condition qui bloque l'exécution
         echo '<div class="woocommerce-Tabs-panel woocommerce-Tabs-panel--vue-eclatee panel entry-content wc-tab" id="tab-vue-eclatee" role="tabpanel" aria-labelledby="tab-title-vue-eclatee" style="display: block;">';
         
-        // Conteneur flex
-        echo '<div style="display: flex; gap: 20px; align-items: flex-start;">';
+        echo '<div style="display: flex; gap: 15px; align-items: flex-start;">';
         
-        // Colonne gauche
-        echo '<div style="flex: 1;">';
+        echo '<div style="flex: 2;">';  
         echo do_shortcode('[zoom_ve]');
         echo do_shortcode('[tooltip_ve]');
         echo do_shortcode('[clickShowProducts]');
@@ -27,10 +24,7 @@ if (!function_exists('add_vue_eclatee_tab')) {
         echo '</div>';
         echo '</div>';
         
-        // Colonne droite
-        echo '<div style="flex: 1;">';
-        
-        // Récupération et affichage du tableau avec SKU
+        echo '<div style="flex: 1;">'; 
         $sku = $product->get_sku();
         echo do_shortcode('[xyz-ips snippet="TestEwan" cross_ref_sku="' . $sku . '"]');
         echo '</div>';
