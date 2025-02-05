@@ -61,7 +61,7 @@ if (!function_exists('zoom_ve_function')) {
 
         <script>
             let scale = 1;
-            const ZOOM_STEPS = [50, 75, 100, 125, 150, 175, 200, 250, 300, 400];
+            const ZOOM_STEPS = [50, 100, 150, 200, 400];
             const MAX_ZOOM = 4;
             const MIN_ZOOM = 0.5;
             

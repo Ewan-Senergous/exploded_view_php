@@ -10,23 +10,41 @@ $svg_content = gzdecode($svg_content);
 
 $positions = [];
 
-// Regex modifiée pour chercher spécifiquement les IDs de 1 à 10
-$pattern = '/<text id="([1-9]|10)" transform="matrix\(1 0 0 1 ([0-9.-]+) ([0-9.-]+)\)">/';
+// Charger le contenu SVG et détecter les "id" dupliqués
+$svg = simplexml_load_string($svg_content);
+$ids = [];
+foreach($svg->xpath('//text') as $text) {
+    $currentId = (string)$text['id'];
+    if (in_array($currentId, $ids)) {
+        // Renommer l'ID pour éviter le doublon
+        $text['id'] = $currentId.'_dup';
+    } else {
+        $ids[] = $currentId;
+    }
+}
+
+// Regex modifiée pour chercher spécifiquement les IDs de 1 à 300
+$pattern = '/<text id="(\d+)" transform="matrix\(1 0 0 1 ([0-9.-]+) ([0-9.-]+)\)">/';
 
 if (preg_match_all($pattern, $svg_content, $matches)) {
 foreach ($matches[1] as $i => $number) {
 $x = floatval($matches[2][$i]);
 $y = floatval($matches[3][$i]);
 
-$positions[$number] = [
+if ((int)$number > 0) {
+$positions[] = [
+'id' => (int)$number,
 'x' => $x,
 'y' => $y
 ];
 }
 }
+}
 
-// Trier les positions par numéro pour s'assurer de l'ordre 1-10
-ksort($positions);
+usort($positions, function($a, $b) {
+    return $a['id'] <=> $b['id'];
+});
+$positions = array_combine(range(1, count($positions)), array_values($positions));
 
 return $positions;
 }
@@ -224,44 +242,54 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (zoomContainer && zoomImage) {
-        // Supprimer la création du point bleu et garder uniquement les points rouges
-        <?php if(!empty($data['table_data'])) {
-            $limit = min(10, count($data['table_data']));
-            for ($index = 0; $index < $limit; $index++) {
-                $item = $data['table_data'][$index];
-                $position_number = $index + 1;
-                $position = isset($svg_positions[$position_number]) 
-                    ? $svg_positions[$position_number] 
-                    : ['x' => 0, 'y' => 0];
+        <?php 
+        // Afficher les cercles pour toutes les positions SVG trouvées
+        if(!empty($svg_positions)) {
+            foreach($svg_positions as $position_number => $position) {
+                // Chercher si des données produit existent pour cette position
+                $item = null;
+                if(!empty($data['table_data'])) {
+                    foreach($data['table_data'] as $product_data) {
+                        if(isset($product_data['Position']) && $product_data['Position'] == $position_number) {
+                            $item = $product_data;
+                            break;
+                        }
+                    }
+                }
         ?>
-                const point<?php echo $index; ?> = document.createElement('div');
-                point<?php echo $index; ?>.className = 'piece-hover';
-                point<?php echo $index; ?>.setAttribute('data-position', '<?php echo $position_number; ?>');
-                point<?php echo $index; ?>.setAttribute('data-original-x', '<?php echo $position['x']; ?>');
-                point<?php echo $index; ?>.setAttribute('data-original-y', '<?php echo $position['y']; ?>');
-                point<?php echo $index; ?>.innerHTML = `
+                const point<?php echo $position_number; ?> = document.createElement('div');
+                point<?php echo $position_number; ?>.className = 'piece-hover';
+                point<?php echo $position_number; ?>.setAttribute('data-position', '<?php echo $position_number; ?>');
+                point<?php echo $position_number; ?>.setAttribute('data-original-x', '<?php echo $position['x']; ?>');
+                point<?php echo $position_number; ?>.setAttribute('data-original-y', '<?php echo $position['y']; ?>');
+                point<?php echo $position_number; ?>.innerHTML = `
                     <div class="popover-content">
                         <div class="popover-title">Position <?php echo $position_number; ?></div>
-                        <p><strong><?php echo htmlspecialchars($item['Nom_produit']); ?></strong></p>
-                        <p>Réf: <?php echo htmlspecialchars($item['Ref_fabriquant']); ?></p>
-                        <div class="quantity-controls">
-                            <button class="minus-btn">-</button>
-                            <input type="number" value="1" min="1" class="quantity-input">
-                            <button class="plus-btn">+</button>
-                        </div>
-                        <button class="add-to-cart-btn-1">
-                            <svg width="14" height="14" viewBox="0 0 24 24" style="stroke:currentColor;fill:none; ;font-weight:bold; stroke-width:2">
-                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-                            </svg>
-                            Ajouter au panier
-                        </button>
+                        <?php if($item): ?>
+                            <p><strong><?php echo htmlspecialchars($item['Nom_produit']); ?></strong></p>
+                            <p>Réf: <?php echo htmlspecialchars($item['Ref_fabriquant']); ?></p>
+                            <div class="quantity-controls">
+                                <button class="minus-btn">-</button>
+                                <input type="number" value="1" min="1" class="quantity-input">
+                                <button class="plus-btn">+</button>
+                            </div>
+                            <button class="add-to-cart-btn-1">
+                                <svg width="14" height="14" viewBox="0 0 24 24" style="stroke:currentColor;fill:none;font-weight:bold;stroke-width:2">
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                                </svg>
+                                Ajouter au panier
+                            </button>
+                        <?php else: ?>
+                            <p>Position <?php echo $position_number; ?></p>
+                        <?php endif; ?>
                     </div>
                 `;
-                zoomContainer.appendChild(point<?php echo $index; ?>);
+                zoomContainer.appendChild(point<?php echo $position_number; ?>);
         <?php
             }
-        } ?>
+        }
+        ?>
 
         // Initialisation et observateurs
         updatePointPositions();

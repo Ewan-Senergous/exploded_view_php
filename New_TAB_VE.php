@@ -31,7 +31,7 @@ if (!function_exists('add_vue_eclatee_tab')) {
         
         echo '</div>';
         echo '</div>';
-        
+        echo do_shortcode('[zoom_ve]');
     }
     
     add_filter('woocommerce_product_tabs', 'add_vue_eclatee_tab');
