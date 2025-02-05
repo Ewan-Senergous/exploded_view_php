@@ -8,6 +8,14 @@ if (!function_exists('tooltip_ve_function')) {
             $svg_content = gzdecode($svg_content);
         }
 
+        // Extraire width et height avec des expressions régulières
+        preg_match('/width="([^"]*)"/', $svg_content, $width_matches);
+        preg_match('/height="([^"]*)"/', $svg_content, $height_matches);
+
+        // Récupérer les valeurs
+        $SVG_WIDTH = floatval($width_matches[1]);
+        $SVG_HEIGHT = floatval($height_matches[1]);
+
         $positions = [];
         // Regex modifiée pour chercher spécifiquement les IDs de 1 à 300
         $pattern = '/<text id="([1-9]|[1-9][0-9]|[1-2][0-9][0-9]|300)" transform="matrix\(1 0 0 1 ([0-9.-]+) ([0-9.-]+)\)">/';
@@ -29,14 +37,17 @@ if (!function_exists('tooltip_ve_function')) {
             return $a['id'] <=> $b['id'];
         });
         
-        return $positions;
+        return ['positions' => $positions, 'width' => $SVG_WIDTH, 'height' => $SVG_HEIGHT];
     }
 
     function tooltip_ve_function() {
         ob_start();
 
         // Récupérer les positions depuis le SVG
-        $svg_positions = getSvgPositions();
+        $svg_data = getSvgPositions();
+        $svg_positions = $svg_data['positions'];
+        $SVG_WIDTH = $svg_data['width'];
+        $SVG_HEIGHT = $svg_data['height'];
         echo "<script>console.log('Positions SVG chargées:', " . json_encode($svg_positions) . ");</script>";
 
         // Récupérer le produit actuel
@@ -186,8 +197,8 @@ if (!function_exists('tooltip_ve_function')) {
             const zoomImage = document.getElementById('zoomImage');
             
             // Dimensions originales du SVG
-            const SVG_WIDTH = 718.949;
-            const SVG_HEIGHT = 493.722;
+            const SVG_WIDTH = <?php echo $SVG_WIDTH; ?>;
+            const SVG_HEIGHT = <?php echo $SVG_HEIGHT; ?>;
             
             // Fonction modifiée pour calculer le facteur d'échelle et la translation
             function calculateScale() {

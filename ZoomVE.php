@@ -67,7 +67,20 @@ if (!function_exists('zoom_ve_function')) {
             function updateTransform() {
                 image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
                 document.getElementById('zoomLevel').textContent = Math.round(scale * 100) + '%';
+                
+                // Dispatch un événement personnalisé avec le niveau de zoom actuel
+                const zoomEvent = new CustomEvent('zoomLevelChanged', { 
+                    detail: { zoom: scale }
+                });
+                window.dispatchEvent(zoomEvent);
             }
+
+            // Exposer scale globalement de manière sécurisée
+            Object.defineProperty(window, 'currentZoomLevel', {
+                get: function() {
+                    return scale;
+                }
+            });
 
             function findNextZoomStep(currentScale, increase) {
                 const currentPercentage = currentScale * 100;
