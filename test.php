@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ?>
                 const point<?php echo $position_number; ?> = document.createElement('div');
                 point<?php echo $position_number; ?>.className = 'piece-hover';
-                point<?php echo $position_number; ?>.setAttribute('data-position', '<?php echo $position_number; ?>');
+                point<?php echo $position_number; ?>.setAttribute('data-position', '<?php echo $position['id']; ?>');
                 point<?php echo $position_number; ?>.setAttribute('data-original-x', '<?php echo $position['x']; ?>');
                 point<?php echo $position_number; ?>.setAttribute('data-original-y', '<?php echo $position['y']; ?>');
                 point<?php echo $position_number; ?>.innerHTML = `

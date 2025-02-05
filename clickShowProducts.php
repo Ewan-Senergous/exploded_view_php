@@ -15,8 +15,7 @@ if (!function_exists('clickShowProducts_function')) {
 
             // Fonction pour ouvrir l'accordéon correspondant à la position
             function openAccordionForPosition(position) {
-                const index = position - 1;
-                const accordionContent = document.getElementById(`accordion-${index}`);
+                const accordionContent = document.getElementById(`accordion-${position}`);
                 const accordionHeader = accordionContent?.previousElementSibling;
                 
                 if (accordionContent && accordionHeader) {
@@ -37,11 +36,10 @@ if (!function_exists('clickShowProducts_function')) {
 
                     // Changer la couleur du point correspondant
                     resetAllPoints();
-                    const point = document.querySelector(`.piece-hover[data-position="${position}"]`);
-                    if (point) {
+                    document.querySelectorAll(`.piece-hover[data-position="${position}"]`).forEach(point => {
                         point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
                         point.style.borderColor = 'rgba(0, 86, 179, 5)';
-                    }
+                    });
                 }
             }
 
@@ -60,11 +58,10 @@ if (!function_exists('clickShowProducts_function')) {
                 header.addEventListener('click', function() {
                     const position = index + 1;
                     resetAllPoints();
-                    const point = document.querySelector(`.piece-hover[data-position="${position}"]`);
-                    if (point) {
+                    document.querySelectorAll(`.piece-hover[data-position="${position}"]`).forEach(point => {
                         point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
                         point.style.borderColor = 'rgba(0, 86, 179, 5)';
-                    }
+                    });
                 });
             });
         });
