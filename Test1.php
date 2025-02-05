@@ -61,9 +61,9 @@ if (!function_exists('zoom_ve_function')) {
 
         <script>
             let scale = 1;
-            const ZOOM_STEPS = [50, 100, 150, 200];
+            const ZOOM_STEPS = [100, 200];
             const MAX_ZOOM = 2;
-            const MIN_ZOOM = 0.5;
+            const MIN_ZOOM = 1;
             
             const container = document.getElementById('zoomContainer');
             const image = document.getElementById('zoomImage');

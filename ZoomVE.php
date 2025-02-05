@@ -30,9 +30,7 @@ if (!function_exists('zoom_ve_function')) {
                 padding: 10px;
                 border-radius: 5px;
                 text-align: center;
-                width: 18rem; 
-                margin-left: auto;
-                margin-right: auto;
+                width: 18rem;
             }
             .zoom-button {
                 background: #fff;
@@ -51,19 +49,13 @@ if (!function_exists('zoom_ve_function')) {
                     <img src="https://www.service-er.de/public/media/E885.svgz" class="zoom-image" id="zoomImage">
                 </div>
             </div>
-            <div class="zoom-controls">
-                <button class="zoom-button" onclick="zoomIn()">-</button>
-                <span id="zoomLevel" style="color: white; margin: 0 10px;">100%</span>
-                <button class="zoom-button" onclick="zoomOut()">+</button>
-                <button class="zoom-button" onclick="resetZoom()">Reset</button>
-            </div>
         </div>
 
         <script>
             let scale = 1;
-            const ZOOM_STEPS = [50, 100, 150, 200, 400];
-            const MAX_ZOOM = 4;
-            const MIN_ZOOM = 0.5;
+            const ZOOM_STEPS = [100, 200];
+            const MAX_ZOOM = 2;
+            const MIN_ZOOM = 1;
             
             const container = document.getElementById('zoomContainer');
             const image = document.getElementById('zoomImage');

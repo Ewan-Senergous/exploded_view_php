@@ -30,11 +30,12 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                     margin-bottom: 15px;
                     border-radius: 8px;
                     overflow: hidden;
+                    position: relative;
                 }
                 .accordion-header {
                     background: #0056B3;
                     color: white;
-                    padding: 25px;
+                    padding: 15px 20px;
                     cursor: pointer;
                     display: flex;
                     justify-content: space-between;
@@ -68,6 +69,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
             // Dans votre tableau.php
             if (isset($jsonData['table_data'])) {
                 $output .= '<div id="scroll-container" class="scroll-container">';
+                
 
                 foreach ($jsonData['table_data'] as $index => $piece) {
                     $sku = htmlspecialchars($piece['Ref_fabriquant']);
@@ -81,18 +83,18 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                             <span class="arrow">▼</span>
                         </div>
                         <div id="accordion-%d" class="accordion-content %s">
-                            <div style="background:white;padding:20px;border-radius:5px">
+                            <div style="background:white;border-radius:5px">
                                 %s
-                                <div style="display:flex;justify-content:flex-start;align-items:start;gap:15px;margin-top:20px">
+                                <div style="display:flex;justify-content:flex-start;align-items:start;gap:10px;margin-top:20px">
                                     <div style="display:flex;align-items:center;gap:10px">
                                         <label style="color:#2c5282">Quantité :</label>
                                         <div style="display:flex;align-items:center">
-                                            <button onclick="this.nextElementSibling.stepDown()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:8px 12px;cursor:pointer">-</button>
+                                            <button onclick="this.nextElementSibling.stepDown()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:5px 9px;cursor:pointer">-</button>
                                             <input type="number" value="1" min="1" style="width:50px;text-align:center;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;border-left:none;border-right:none;padding:7px 0">
-                                            <button onclick="this.previousElementSibling.stepUp()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:8px 12px;cursor:pointer">+</button>
+                                            <button onclick="this.previousElementSibling.stepUp()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:5px 9px;cursor:pointer">+</button>
                                         </div>
                                     </div>
-                                    <button onclick="ajouterAuPanier(\'%s\',%d)" class="add-to-cart-btn" style="color:white;padding:9px 8px;border:none;border-radius:5px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:8px">
+                                    <button onclick="ajouterAuPanier(\'%s\',%d)" class="add-to-cart-btn" style="color:white;padding:6px 8px;border:none;border-radius:5px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:8px">
                                         <svg width="16" height="16" viewBox="0 0 24 24" style="stroke:currentColor;fill:none;stroke-width:2"><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
                                         Ajouter au panier
                                     </button>
@@ -122,7 +124,17 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                     wc_get_cart_url()
                     );
                 }
-                $output .= '</div>';
+                $output .= '</div>'; // fin de scroll-container
+
+                // Ajouter le conteneur bouton de zoom en dessous
+                $output .= '
+                <div class="zoom-controls">
+                <button class="zoom-button" onclick="resetZoom()">Reset</button>
+                <button class="zoom-button" onclick="zoomIn()">-</button>
+                <span id="zoomLevel" style="color: white; margin: 0 10px;">100%</span>
+                <button class="zoom-button" onclick="zoomOut()">+</button>
+                </div>
+                ';
             }
 
             $output .= '<script>
