@@ -64,6 +64,23 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                     max-height: 600px;
                     overflow-y: auto;
                 }
+                @media (max-width: 1900px) {
+                    .product-info-row {
+                        flex-direction: column;
+                        margin: 15px 0 ;
+                    }
+                    .product-info-row span {
+                        min-width: 100% ;
+                    }
+                    .actions-container {
+                        flex-direction: column ;
+                        align-items: stretch ;
+                        gap: 15px ;
+                    }
+                    .quantity-container {
+                        justify-content: center ;
+                    }
+                }
             </style>';
 
             // Dans votre tableau.php
@@ -85,8 +102,8 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                         <div id="accordion-%d" class="accordion-content %s">
                             <div style="background:white;border-radius:5px">
                                 %s
-                                <div style="display:flex;justify-content:flex-start;align-items:start;gap:10px;margin-top:20px">
-                                    <div style="display:flex;align-items:center;gap:10px">
+                                <div class="actions-container" style="display:flex;justify-content:flex-start;align-items:start;gap:10px;margin-top:20px">
+                                    <div class="quantity-container" style="display:flex;align-items:center;gap:10px">
                                         <label style="color:#2c5282">Quantité :</label>
                                         <div style="display:flex;align-items:center">
                                             <button onclick="this.nextElementSibling.stepDown()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:5px 9px;cursor:pointer">-</button>
@@ -114,7 +131,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                     $index,
                     $index === 0 ? 'active' : '',
                     implode('', array_map(fn($k, $v) => (!empty($k) && !empty($v) && $k !== "vide" && $v !== "vide") ?
-                        sprintf('<div style="display:flex;margin:10px 0"><span style="color:#2c5282;min-width:120px">%s&nbsp;:&nbsp;</span><span>%s</span></div>',
+                        sprintf('<div class="product-info-row" style="display:flex;margin:10px 0;"><span style="color:#2c5282;min-width:120px">%s&nbsp;:&nbsp;</span><span>%s</span></div>',
                         htmlspecialchars($k),
                         ($k === 'Ref_fabriquant' || $k === 'Nom_produit') ? '<strong>' . htmlspecialchars($v) . '</strong>' : htmlspecialchars($v)
                         ) : '', array_keys($piece), $piece)),

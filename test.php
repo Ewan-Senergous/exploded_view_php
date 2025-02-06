@@ -236,19 +236,19 @@ if (!function_exists('tooltip_ve_function')) {
                         // Nouvelles dimensions pour zoom 200%
                         if (position >= 10 && position < 100) {
                             point.style.width = '42px'; // Double de 21px
-                            point.style.height = '25px'; // Nouvelle hauteur fixe
+                            point.style.height = '30px'; // Nouvelle hauteur fixe
                             point.style.marginLeft = '-7px'; // Double de -3.5px
-                            point.style.marginTop = '-22px'; // Double de -11px
+                            point.style.marginTop = '-23px'; // Double de -11px
                         } else if (position >= 100) {
                             point.style.width = '54px'; // Double de 27px
-                            point.style.height = '25px'; // Nouvelle hauteur fixe
+                            point.style.height = '30px'; // Nouvelle hauteur fixe
                             point.style.marginLeft = '-7px'; // Double de -3.5px
-                            point.style.marginTop = '-22px'; // Double de -11px
+                            point.style.marginTop = '-23px'; // Double de -11px
                         } else {
                             point.style.width = '30px'; // Double de 15px
-                            point.style.height = '25px'; // Nouvelle hauteur fixe
+                            point.style.height = '30px'; // Nouvelle hauteur fixe
                             point.style.marginLeft = '-7px'; // Double de -3.5px
-                            point.style.marginTop = '-20px'; // Double de -11.5px
+                            point.style.marginTop = '-23px'; // Double de -11.5px
                         }
                         point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
                         point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
