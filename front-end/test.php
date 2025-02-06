@@ -71,8 +71,8 @@ if (!function_exists('tooltip_ve_function')) {
             cursor: pointer;
             width: 15px; 
             height: 15px; 
-            background-color: rgba(255, 0, 0, 0.3);
-            border: 2px solid rgba(255, 0, 0, 5); 
+            /* Supprimé la couleur fixe car elle sera définie dynamiquement */
+            border: 2px solid; /* La couleur de bordure sera définie dynamiquement */
             transform-origin: center;
             pointer-events: all;
             z-index: 1000;
@@ -218,13 +218,61 @@ if (!function_exists('tooltip_ve_function')) {
             // Fonction modifiée pour mettre à jour les positions des points
             function updatePointPositions() {
                 const transforms = calculateScale();
+                
+                // Utiliser l'événement zoom ou la variable globale
+                const currentZoom = window.currentZoomLevel || transforms.zoom;
+                console.log('Current zoom level:', currentZoom);
 
                 document.querySelectorAll('.piece-hover').forEach(point => {
                     const originalX = parseFloat(point.getAttribute('data-original-x'));
                     const originalY = parseFloat(point.getAttribute('data-original-y'));
+                    const position = parseInt(point.getAttribute('data-position'));
                     
                     const scaledX = (originalX * transforms.scaleX * transforms.zoom) + transforms.translateX;
                     const scaledY = (originalY * transforms.scaleY * transforms.zoom) + transforms.translateY;
+                    
+                    // Changer la couleur et les dimensions en fonction du zoom
+                    if (currentZoom >= 2) { // 200%
+                        // Nouvelles dimensions pour zoom 200%
+                        if (position >= 10 && position < 100) {
+                            point.style.width = '42px'; // Double de 21px
+                            point.style.height = '30px'; // Nouvelle hauteur fixe
+                            point.style.marginLeft = '-7px'; // Double de -3.5px
+                            point.style.marginTop = '-23px'; // Double de -11px
+                        } else if (position >= 100) {
+                            point.style.width = '54px'; // Double de 27px
+                            point.style.height = '30px'; // Nouvelle hauteur fixe
+                            point.style.marginLeft = '-7px'; // Double de -3.5px
+                            point.style.marginTop = '-23px'; // Double de -11px
+                        } else {
+                            point.style.width = '30px'; // Double de 15px
+                            point.style.height = '30px'; // Nouvelle hauteur fixe
+                            point.style.marginLeft = '-7px'; // Double de -3.5px
+                            point.style.marginTop = '-23px'; // Double de -11.5px
+                        }
+                        point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+                        point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
+                    } else {
+                        // Dimensions originales pour zoom normal
+                        if (position >= 10 && position < 100) {
+                            point.style.width = '21px';
+                            point.style.height = '15px';
+                            point.style.marginLeft = '-3.5px';
+                            point.style.marginTop = '-11px';
+                        } else if (position >= 100) {
+                            point.style.width = '27px';
+                            point.style.height = '15px';
+                            point.style.marginLeft = '-3.5px';
+                            point.style.marginTop = '-11px';
+                        } else {
+                            point.style.width = '15px';
+                            point.style.height = '15px';
+                            point.style.marginLeft = '-3.5px';
+                            point.style.marginTop = '-11.5px';
+                        }
+                        point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+                        point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
+                    }
                     
                     point.style.transform = `translate(${scaledX}px, ${scaledY}px) scale(${transforms.zoom})`;
                     point.style.left = '0';
@@ -336,6 +384,11 @@ if (!function_exists('tooltip_ve_function')) {
 
                 // Mettre à jour lors du redimensionnement de la fenêtre
                 window.addEventListener('resize', () => {
+                    requestAnimationFrame(updatePointPositions);
+                });
+
+                // Écouter l'événement de zoom
+                window.addEventListener('zoomLevelChanged', (e) => {
                     requestAnimationFrame(updatePointPositions);
                 });
             }

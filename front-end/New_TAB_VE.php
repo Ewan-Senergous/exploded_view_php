@@ -26,6 +26,7 @@ if (!function_exists('add_vue_eclatee_tab')) {
         
         echo '<div style="flex: 30;">'; 
         $sku = $product->get_sku();
+        
         echo do_shortcode('[xyz-ips snippet="TestEwan" cross_ref_sku="' . $sku . '"]');
         echo '</div>';
         

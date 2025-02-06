@@ -56,7 +56,9 @@ if (!function_exists('clickShowProducts_function')) {
             // Ajouter l'écouteur de clic sur les en-têtes d'accordéon
             document.querySelectorAll('.accordion-header').forEach((header, index) => {
                 header.addEventListener('click', function() {
+                    // Utiliser index + 1 pour correspondre aux positions des pièces
                     const position = index + 1;
+                    
                     resetAllPoints();
                     document.querySelectorAll(`.piece-hover[data-position="${position}"]`).forEach(point => {
                         point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
