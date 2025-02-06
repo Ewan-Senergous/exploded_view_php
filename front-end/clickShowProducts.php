@@ -13,9 +13,11 @@ if (!function_exists('clickShowProducts_function')) {
                 });
             }
 
-            // Fonction pour ouvrir l'accordéon correspondant à la position
+            // Fonction modifiée pour ouvrir l'accordéon correspondant à la position
             function openAccordionForPosition(position) {
-                const accordionContent = document.getElementById(`accordion-${position}`);
+                // Soustraire 1 de la position pour obtenir le bon index d'accordéon
+                const accordionIndex = position - 1;
+                const accordionContent = document.getElementById(`accordion-${accordionIndex}`);
                 const accordionHeader = accordionContent?.previousElementSibling;
                 
                 if (accordionContent && accordionHeader) {
@@ -53,10 +55,10 @@ if (!function_exists('clickShowProducts_function')) {
                 });
             });
 
-            // Ajouter l'écouteur de clic sur les en-têtes d'accordéon
+            // Modifier l'écouteur de clic sur les en-têtes d'accordéon
             document.querySelectorAll('.accordion-header').forEach((header, index) => {
                 header.addEventListener('click', function() {
-                    // Utiliser index + 1 pour correspondre aux positions des pièces
+                    // Ajouter 1 à l'index pour correspondre aux positions des pièces
                     const position = index + 1;
                     
                     resetAllPoints();
