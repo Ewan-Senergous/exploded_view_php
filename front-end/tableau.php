@@ -64,6 +64,19 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                     max-height: 600px;
                     overflow-y: auto;
                 }
+                .zoom-controls.desktop {
+                    display: block;
+                }
+                @media (max-width: 768px) {
+                    .zoom-controls.desktop {
+                        display: none !important;
+                    }
+                }
+                @media (max-width: 768px) {
+                    .scroll-container {
+                        max-height: 400px !important;
+                    }
+                }
                 @media (max-width: 1900px) {
                     .product-info-row {
                         flex-direction: column;
@@ -79,6 +92,9 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                     }
                     .quantity-container {
                         justify-content: center ;
+                    }
+                    .scroll-container {
+                    max-height: 500px;
                     }
                 }
             </style>';
@@ -143,13 +159,13 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                 }
                 $output .= '</div>'; // fin de scroll-container
 
-                // Ajouter le conteneur bouton de zoom en dessous
+                // Ajouter les contrôles de zoom desktop
                 $output .= '
-                <div class="zoom-controls">
-                <button class="zoom-button" onclick="resetZoom()">Reset</button>
-                <button class="zoom-button" onclick="zoomIn()">-</button>
-                <span id="zoomLevel" style="color: white; margin: 0 10px;">100%</span>
-                <button class="zoom-button" onclick="zoomOut()">+</button>
+                <div class="zoom-controls desktop">
+                    <button class="zoom-button" onclick="resetZoom()">Reset</button>
+                    <button class="zoom-button" onclick="zoomIn()">-</button>
+                    <span id="zoomLevel" style="color: white; margin: 0 10px;">100%</span>
+                    <button class="zoom-button" onclick="zoomOut()">+</button>
                 </div>
                 ';
             }

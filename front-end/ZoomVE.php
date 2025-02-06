@@ -31,6 +31,23 @@ if (!function_exists('zoom_ve_function')) {
                 border-radius: 5px;
                 text-align: center;
                 width: 18rem;
+                display: none; /* Par défaut, tous les contrôles sont cachés */
+            }
+            .zoom-controls.desktop {
+                display: none; /* Cache complètement les contrôles desktop sous l'image */
+            }
+            .zoom-controls.mobile {
+                display: none; /* Caché par défaut */
+            }
+            @media (max-width: 768px) {
+                .zoom-controls.desktop {
+                    display: none !important; /* Force le masquage en mobile */
+                }
+                .zoom-controls.mobile {
+                    display: block !important; /* Affichage uniquement en mobile */
+                    margin: 10px auto;
+                    width: 100%;
+                }
             }
             .zoom-button {
                 background: #fff;
@@ -49,12 +66,20 @@ if (!function_exists('zoom_ve_function')) {
                     <img src="https://www.service-er.de/public/media/E885.svgz" class="zoom-image" id="zoomImage">
                 </div>
             </div>
+            <!-- Uniquement les contrôles mobiles -->
+            <div class="zoom-controls mobile">
+                <button class="zoom-button" onclick="resetZoom()">Reset</button>
+                <button class="zoom-button" onclick="zoomIn()">-</button>
+                <span id="zoomLevel-mobile" style="color: white; margin: 0 10px;">100%</span>
+                <button class="zoom-button" onclick="zoomOut()">+</button>
+            </div>
         </div>
 
         <script>
             let scale = 1;
             const ZOOM_STEPS = [100, 200];
-            const MAX_ZOOM = 2;
+            // Ajuster le zoom maximum selon la taille d'écran
+            const MAX_ZOOM = window.innerWidth <= 768 ? 6 : 2;
             const MIN_ZOOM = 1;
             
             const container = document.getElementById('zoomContainer');
@@ -67,6 +92,7 @@ if (!function_exists('zoom_ve_function')) {
             function updateTransform() {
                 image.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
                 document.getElementById('zoomLevel').textContent = Math.round(scale * 100) + '%';
+                document.getElementById('zoomLevel-mobile').textContent = Math.round(scale * 100) + '%';
                 
                 // Dispatch un événement personnalisé avec le niveau de zoom actuel
                 const zoomEvent = new CustomEvent('zoomLevelChanged', { 
