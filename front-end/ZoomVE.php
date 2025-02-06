@@ -77,10 +77,10 @@ if (!function_exists('zoom_ve_function')) {
 
         <script>
             let scale = 1;
-            const ZOOM_STEPS = [100, 200];
-            // Ajuster le zoom maximum selon la taille d'écran
-            const MAX_ZOOM = window.innerWidth <= 768 ? 6 : 2;
-            const MIN_ZOOM = 1;
+            // Modification des étapes de zoom selon le device
+            const ZOOM_STEPS = window.innerWidth <= 768 ? [400] : [100, 200];
+            const MAX_ZOOM = window.innerWidth <= 768 ? 4 : 2;
+            const MIN_ZOOM = window.innerWidth <= 768 ? 4 : 1; // Force le zoom minimum à 600% sur mobile
             
             const container = document.getElementById('zoomContainer');
             const image = document.getElementById('zoomImage');
@@ -109,6 +109,12 @@ if (!function_exists('zoom_ve_function')) {
             });
 
             function findNextZoomStep(currentScale, increase) {
+                // Sur mobile, on force le zoom à 600%
+                if (window.innerWidth <= 768) {
+                    return 4; // 600%
+                }
+                
+                // Sur desktop, comportement normal
                 const currentPercentage = currentScale * 100;
                 if (increase) {
                     for (let step of ZOOM_STEPS) {
@@ -191,12 +197,20 @@ if (!function_exists('zoom_ve_function')) {
                 zoomToPoint(centerX, centerY, true);
             }
 
+            // Modifier la fonction resetZoom pour tenir compte du mobile
             function resetZoom() {
-                scale = 1;
+                scale = window.innerWidth <= 768 ? 4 : 1; // 600% sur mobile, 100% sur desktop
                 translateX = 0;
                 translateY = 0;
                 updateTransform();
             }
+
+            // Initialiser le zoom correct au chargement
+            document.addEventListener('DOMContentLoaded', function() {
+                if (window.innerWidth <= 768) {
+                    resetZoom(); // Applique automatiquement le zoom 600% sur mobile
+                }
+            });
         </script>
         <?php
         return ob_get_clean();
