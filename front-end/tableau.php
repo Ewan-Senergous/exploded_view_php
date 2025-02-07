@@ -166,10 +166,11 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                     // Nouvelle logique pour afficher uniquement les champs souhaités
                     implode('', array_map(function($k, $v) {
                         // Liste des champs à exclure
-                        $excludedFields = ['panier', 'position_vue_eclatee', 'reference_vue_eclatee', 'dat_validite'];
+                        $excludedFields = ['panier', 'reference_vue_eclatee', 'dat_validite'];
                         
                         // Liste des champs à afficher avec leurs labels en français
                         $fieldLabels = [
+                            'position_vue_eclatee' => 'Position',
                             'reference_piece' => 'Référence pièce',
                             'nom_model' => 'Nom du modèle',
                             'contenu_dans_kit' => 'Contenu dans kit',

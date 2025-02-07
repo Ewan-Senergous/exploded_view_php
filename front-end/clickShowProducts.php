@@ -9,18 +9,31 @@ if (!function_exists('clickShowProducts_function')) {
             function resetAllPoints() {
                 document.querySelectorAll('.piece-hover').forEach(point => {
                     point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                    point.style.borderColor = 'rgba(255, 0, 0, 5)';
+                    point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
                 });
+            }
+
+            // Fonction pour trouver l'accordéon par position
+            function findAccordionByPosition(position) {
+                const headers = document.querySelectorAll('.accordion-header');
+                for (let header of headers) {
+                    const posText = header.querySelector('span').textContent;
+                    const pos = parseInt(posText.match(/Position (\d+)/)[1]);
+                    if (pos === parseInt(position)) {
+                        return {
+                            header: header,
+                            content: header.nextElementSibling
+                        };
+                    }
+                }
+                return null;
             }
 
             // Fonction modifiée pour ouvrir l'accordéon correspondant à la position
             function openAccordionForPosition(position) {
-                // Soustraire 1 de la position pour obtenir le bon index d'accordéon
-                const accordionIndex = position - 1;
-                const accordionContent = document.getElementById(`accordion-${accordionIndex}`);
-                const accordionHeader = accordionContent?.previousElementSibling;
+                const accordion = findAccordionByPosition(position);
                 
-                if (accordionContent && accordionHeader) {
+                if (accordion) {
                     // Fermer tous les accordéons d'abord
                     document.querySelectorAll('.accordion-content').forEach(content => {
                         content.style.display = 'none';
@@ -29,18 +42,18 @@ if (!function_exists('clickShowProducts_function')) {
                     });
 
                     // Ouvrir l'accordéon sélectionné
-                    accordionContent.style.display = 'block';
-                    accordionContent.classList.add('active');
-                    accordionHeader.querySelector('.arrow').innerHTML = '▲';
+                    accordion.content.style.display = 'block';
+                    accordion.content.classList.add('active');
+                    accordion.header.querySelector('.arrow').innerHTML = '▲';
 
                     // Faire défiler jusqu'à l'accordéon
-                    accordionHeader.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    accordion.header.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
                     // Changer la couleur du point correspondant
                     resetAllPoints();
                     document.querySelectorAll(`.piece-hover[data-position="${position}"]`).forEach(point => {
                         point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
-                        point.style.borderColor = 'rgba(0, 86, 179, 5)';
+                        point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
                     });
                 }
             }
@@ -56,15 +69,15 @@ if (!function_exists('clickShowProducts_function')) {
             });
 
             // Modifier l'écouteur de clic sur les en-têtes d'accordéon
-            document.querySelectorAll('.accordion-header').forEach((header, index) => {
+            document.querySelectorAll('.accordion-header').forEach(header => {
                 header.addEventListener('click', function() {
-                    // Ajouter 1 à l'index pour correspondre aux positions des pièces
-                    const position = index + 1;
+                    const posText = this.querySelector('span').textContent;
+                    const position = parseInt(posText.match(/Position (\d+)/)[1]);
                     
                     resetAllPoints();
                     document.querySelectorAll(`.piece-hover[data-position="${position}"]`).forEach(point => {
                         point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
-                        point.style.borderColor = 'rgba(0, 86, 179, 5)';
+                        point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
                     });
                 });
             });
