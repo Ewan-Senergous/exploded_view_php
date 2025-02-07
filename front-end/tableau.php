@@ -91,24 +91,48 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                 }
                 .product-info-row {
                     display: flex;
-                    margin: 10px 0;
+                    margin: 0;
                 }
-                .product-info-row span:first-child {
-                    color: #2c5282;
-                    min-width: 120px;
+                .details-dropdown {
+                    margin: 0;
+                }
+                .actions-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+                @media (min-width: 1900px) {
+                    .product-content-container {
+                        gap: 25px;
+                    }
+                    .actions-group {
+                        flex-direction: row;
+                         gap: 10px;
+                    }    
+                }
+                .product-content-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+                .accordion-content > div {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
                 }
                 @media (min-width: 1900px) {
                     .product-info-row {
                         flex-wrap: wrap;
+                        
                     }
                     .product-info-row span {
                         word-break: break-word;
                     }
+                       
                 }
                 @media (max-width: 1900px) {
                     .product-info-row {
                         flex-direction: column;
-                        margin: 15px 0;
                     }
                     .product-info-row span {
                         min-width: 100%;
@@ -118,12 +142,29 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                         align-items: stretch;
                         gap: 15px;
                     }
-                    .quantity-container {
-                        justify-content: center;
-                    }
                     .scroll-container {
                         max-height: 500px;
                     }
+                }
+                .details-dropdown {
+                    border: 1px solid #e2e8f0;
+                    border-radius: 5px;
+                }
+                .dropdown-header {
+                    background: #f8fafc;
+                    padding: 10px 15px;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    border-radius: 5px;
+                }
+                .dropdown-content {
+                    display: none;
+                    padding: 15px;
+                }
+                .dropdown-content.show {
+                    display: block;
                 }
             </style>';
 
@@ -150,53 +191,79 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
 
                     $output .= sprintf('
                     <div class="accordion">
-                       <div class="accordion-header" onclick="toggleAccordion(%d, event)">
+                        <div class="accordion-header" onclick="toggleAccordion(%d, event)">
                             <span>Position %d - <span class="product-name">%s</span></span>
                             <span class="arrow">▼</span>
                         </div>
                         <div id="accordion-%d" class="accordion-content %s">
-                            <div style="background:white;border-radius:5px">
-                                %s
-                                <div class="actions-container" style="display:flex;justify-content:flex-start;align-items:start;gap:10px;margin-top:20px">',
+                            <div class="product-content-container">',
                     $index,
                     $position, // Utiliser la position réelle au lieu de ($index + 1)
                     '<strong>' . $nom_model . '</strong>',
                     $index,
-                    $index === 0 ? 'active' : '',
-                    // Nouvelle logique pour afficher uniquement les champs souhaités
-                    implode('', array_map(function($k, $v) {
-                        // Liste des champs à exclure
+                    $index === 0 ? 'active' : ''
+                );
+
+                    // Afficher la référence pièce
+                    $output .= implode('', array_map(function($k, $v) {
                         $excludedFields = ['panier', 'reference_vue_eclatee', 'dat_validite'];
                         
-                        // Liste des champs à afficher avec leurs labels en français
-                        $fieldLabels = [
-                            'position_vue_eclatee' => 'Position',
-                            'reference_piece' => 'Référence pièce',
-                            'nom_model' => 'Nom du modèle',
-                            'contenu_dans_kit' => 'Contenu dans kit',
-                            'nom_piece' => 'Nom de la pièce',
-                            'reference_model' => 'Référence modèle',
-                            'quantite' => 'Quantité'
-                        ];
-                        
-                        if (!in_array($k, $excludedFields) && isset($fieldLabels[$k])) {
+                        // N'afficher que la référence pièce en dehors de la dropdown
+                        if ($k === 'reference_piece') {
                             $value = isEmptyOrSpecialChar($v) 
                                 ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>' 
                                 : '<strong>' . htmlspecialchars($v) . '</strong>';
 
                             return sprintf(
-                                '<div class="product-info-row" style="display:flex;margin:10px 0;">
-                                    <span style="color:#2c5282;min-width:120px">%s&nbsp;:&nbsp;</span>
+                                '<div class="product-info-row" style="display:flex;">
+                                    <span style="color:#2c5282;min-width:120px">Référence pièce&nbsp;:&nbsp;</span>
                                     <span>%s</span>
                                 </div>',
-                                htmlspecialchars($fieldLabels[$k]),
                                 $value
                             );
                         }
                         return '';
-                    }, array_keys($piece), $piece))
-                );
+                    }, array_keys($piece), $piece));
 
+                    // Ajouter la dropdown list avec toutes les autres informations
+                    $output .= '
+                    <div class="details-dropdown">
+                        <div class="dropdown-header" onclick="toggleDropdown(this)">
+                            <span>Détails supplémentaires</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </div>
+                        <div class="dropdown-content">
+                        ' . implode('', array_map(function($k, $v) {
+                            $excludedFields = ['panier', 'reference_vue_eclatee', 'dat_validite', 'reference_piece'];
+                            $fieldLabels = [
+                                'position_vue_eclatee' => 'Position',
+                                'nom_model' => 'Nom du modèle',
+                                'contenu_dans_kit' => 'Contenu dans kit',
+                                'nom_piece' => 'Nom de la pièce',
+                                'reference_model' => 'Référence modèle',
+                                'quantite' => 'Quantité'
+                            ];
+                            
+                            if (!in_array($k, $excludedFields) && isset($fieldLabels[$k])) {
+                                $value = isEmptyOrSpecialChar($v) 
+                                    ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>' 
+                                    : '<strong>' . htmlspecialchars($v) . '</strong>';
+                                return sprintf(
+                                    '<div class="product-info-row">
+                                        <span style="color:#2c5282">%s&nbsp;:&nbsp;</span>
+                                        <span>%s</span>
+                                    </div>',
+                                    htmlspecialchars($fieldLabels[$k]),
+                                    $value
+                                );
+                            }
+                            return '';
+                        }, array_keys($piece), $piece)) . '
+                        </div>
+                    </div>';
+
+                    // Groupe des actions (quantité et bouton panier)
+                    $output .= '<div class="actions-group">';
                     $output .= sprintf('
                                     <div class="quantity-container" style="display:flex;align-items:center;gap:10px">
                                         <label style="color:#2c5282">Quantité :</label>
@@ -206,7 +273,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                                             <button onclick="this.previousElementSibling.stepUp()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:5px 9px;cursor:pointer">+</button>
                                         </div>
                                     </div>
-                                    <button onclick="ajouterAuPanier(\'%s\',%d)" class="add-to-cart-btn" style="color:white;padding:6px 8px;border:none;border-radius:5px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:8px">
+                                    <button onclick="ajouterAuPanier(\'%s\',%d)" class="add-to-cart-btn" style="color:white;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:8px; width: fit-content">
                                         <svg width="16" height="16" viewBox="0 0 24 24" style="stroke:currentColor;fill:none;stroke-width:2"><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
                                         Ajouter au panier
                                     </button>
@@ -315,6 +382,18 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                 setTimeout(() => {
                     btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><path d=\'M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6\'/><circle cx=\'9\' cy=\'21\' r=\'1\'/><circle cx=\'20\' cy=\'21\' r=\'1\'/></svg>Ajouter au panier</div>";
                 }, 2000);
+            }
+
+            function toggleDropdown(header) {
+                const content = header.nextElementSibling;
+                const arrow = header.querySelector(".dropdown-arrow");
+                if (content.classList.contains("show")) {
+                    content.classList.remove("show");
+                    arrow.textContent = "▼";
+                } else {
+                    content.classList.add("show");
+                    arrow.textContent = "▲";
+                }
             }
 
             // Initialiser le premier accordéon comme ouvert au chargement de la page
