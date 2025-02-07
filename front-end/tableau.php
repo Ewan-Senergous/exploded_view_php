@@ -4,6 +4,13 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
         return ($id = wc_get_product_id_by_sku($sku)) ? $id : 0;
     }
 
+    // Nouvelle fonction pour valider la position
+    function isValidPosition($position) {
+        // Convertir en entier et vérifier si c'est un nombre entre 1 et 1000
+        $pos = intval($position);
+        return $pos >= 1 && $pos <= 1000;
+    }
+
     function afficher_caracteristiques_produit_v2() {
         try {
             $product = wc_get_product(get_the_ID()) ?? $GLOBALS['product'] ?? throw new Exception('Produit non trouvé');
@@ -103,16 +110,27 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
             if (isset($jsonData['table_data'])) {
                 $output .= '<div id="scroll-container" class="scroll-container">';
                 
+                // Filtrer et trier les données
+                $filtered_data = array_filter($jsonData['table_data'], function($piece) {
+                    return isset($piece['position_vue_eclatee']) && 
+                           isValidPosition($piece['position_vue_eclatee']);
+                });
 
-                foreach ($jsonData['table_data'] as $index => $piece) {
+                // Trier par position
+                usort($filtered_data, function($a, $b) {
+                    return intval($a['position_vue_eclatee']) - intval($b['position_vue_eclatee']);
+                });
+
+                foreach ($filtered_data as $index => $piece) {
                     $sku = htmlspecialchars($piece['reference_piece']);
                     $nom_model = htmlspecialchars($piece['nom_model']);
                     $variation_id = get_product_variation_id_by_sku($sku);
+                    $position = intval($piece['position_vue_eclatee']);
 
                     $output .= sprintf('
                     <div class="accordion">
                        <div class="accordion-header" onclick="toggleAccordion(%d, event)">
-                            <span>%s - <span class="product-name">%s</span></span>
+                            <span>Position %d - <span class="product-name">%s</span></span>
                             <span class="arrow">▼</span>
                         </div>
                         <div id="accordion-%d" class="accordion-content %s">
@@ -120,7 +138,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                                 %s
                                 <div class="actions-container" style="display:flex;justify-content:flex-start;align-items:start;gap:10px;margin-top:20px">',
                     $index,
-                    '<strong>Position ' . ($index + 1) . '</strong>',
+                    $position, // Utiliser la position réelle au lieu de ($index + 1)
                     '<strong>' . $nom_model . '</strong>',
                     $index,
                     $index === 0 ? 'active' : '',
