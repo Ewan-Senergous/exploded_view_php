@@ -185,7 +185,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
 
                 foreach ($filtered_data as $index => $piece) {
                     $sku = htmlspecialchars($piece['reference_piece']);
-                    $nom_model = htmlspecialchars($piece['nom_model']);
+                    $nom_piece = htmlspecialchars($piece['nom_piece']);
                     $variation_id = get_product_variation_id_by_sku($sku);
                     $position = intval($piece['position_vue_eclatee']);
 
@@ -199,24 +199,24 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                             <div class="product-content-container">',
                     $index,
                     $position, // Utiliser la position réelle au lieu de ($index + 1)
-                    '<strong>' . $nom_model . '</strong>',
+                    '<strong>' . $nom_piece . '</strong>',
                     $index,
                     $index === 0 ? 'active' : ''
                 );
 
-                    // Afficher la référence pièce
+                    // Remplacer la section qui affiche la référence pièce par la quantité
                     $output .= implode('', array_map(function($k, $v) {
                         $excludedFields = ['panier', 'reference_vue_eclatee', 'dat_validite'];
                         
-                        // N'afficher que la référence pièce en dehors de la dropdown
-                        if ($k === 'reference_piece') {
+                        // N'afficher que la quantité en dehors de la dropdown
+                        if ($k === 'quantite') {
                             $value = isEmptyOrSpecialChar($v) 
                                 ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>' 
                                 : '<strong>' . htmlspecialchars($v) . '</strong>';
 
                             return sprintf(
                                 '<div class="product-info-row" style="display:flex;">
-                                    <span style="color:#2c5282;min-width:120px">Référence pièce&nbsp;:&nbsp;</span>
+                                    <span style="color:#2c5282">Quantité&nbsp;:&nbsp;</span>
                                     <span>%s</span>
                                 </div>',
                                 $value
@@ -234,14 +234,14 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                         </div>
                         <div class="dropdown-content">
                         ' . implode('', array_map(function($k, $v) {
-                            $excludedFields = ['panier', 'reference_vue_eclatee', 'dat_validite', 'reference_piece'];
+                            $excludedFields = ['panier', 'position_vue_eclatee', 'reference_vue_eclatee', 'dat_validite', 'quantite', 'contenu_dans_kit'];
                             $fieldLabels = [
                                 'position_vue_eclatee' => 'Position',
                                 'nom_model' => 'Nom du modèle',
-                                'contenu_dans_kit' => 'Contenu dans kit',
                                 'nom_piece' => 'Nom de la pièce',
                                 'reference_model' => 'Référence modèle',
-                                'quantite' => 'Quantité'
+                                'quantite' => 'Quantité',
+                                'reference_piece' => 'Référence pièce',
                             ];
                             
                             if (!in_array($k, $excludedFields) && isset($fieldLabels[$k])) {

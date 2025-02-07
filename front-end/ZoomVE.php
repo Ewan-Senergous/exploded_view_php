@@ -74,7 +74,6 @@ if (!function_exists('zoom_ve_function')) {
                 .zoom-wrapper {
                     max-width: 1400px;
                     margin: 0 auto;
-                    background-color: aqua;
                 }
             }
             .zoom-button {
