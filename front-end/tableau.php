@@ -232,35 +232,36 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                             <span>Détails supplémentaires</span>
                             <span class="dropdown-arrow">▼</span>
                         </div>
-                        <div class="dropdown-content">
-                        ' . implode('', array_map(function($k, $v) {
-                            $excludedFields = ['panier', 'position_vue_eclatee', 'reference_vue_eclatee', 'dat_validite', 'quantite', 'contenu_dans_kit'];
-                            $fieldLabels = [
-                                'position_vue_eclatee' => 'Position',
+                        <div class="dropdown-content">';
+
+                    // Définir l'ordre spécifique des champs
+                    $orderedFields = ['nom_model', 'reference_model', 'reference_piece', 'contenu_dans_kit'];
+                    foreach ($orderedFields as $field) {
+                        if (isset($piece[$field])) {
+                            $label = [
                                 'nom_model' => 'Nom du modèle',
-                                'nom_piece' => 'Nom de la pièce',
                                 'reference_model' => 'Référence modèle',
-                                'quantite' => 'Quantité',
                                 'reference_piece' => 'Référence pièce',
-                            ];
+                                'nom_piece' => 'Nom de la pièce',
+                                'contenu_dans_kit' => 'Contenu dans le kit'
+                            ][$field];
                             
-                            if (!in_array($k, $excludedFields) && isset($fieldLabels[$k])) {
-                                $value = isEmptyOrSpecialChar($v) 
-                                    ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>' 
-                                    : '<strong>' . htmlspecialchars($v) . '</strong>';
-                                return sprintf(
-                                    '<div class="product-info-row">
-                                        <span style="color:#2c5282">%s&nbsp;:&nbsp;</span>
-                                        <span>%s</span>
-                                    </div>',
-                                    htmlspecialchars($fieldLabels[$k]),
-                                    $value
-                                );
-                            }
-                            return '';
-                        }, array_keys($piece), $piece)) . '
-                        </div>
-                    </div>';
+                            $value = isEmptyOrSpecialChar($piece[$field]) 
+                                ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>' 
+                                : '<strong>' . htmlspecialchars($piece[$field]) . '</strong>';
+                            
+                            $output .= sprintf(
+                                '<div class="product-info-row">
+                                    <span style="color:#2c5282">%s&nbsp;:&nbsp;</span>
+                                    <span>%s</span>
+                                </div>',
+                                $label,
+                                $value
+                            );
+                        }
+                    }
+
+                    $output .= '</div></div>';
 
                     // Groupe des actions (quantité et bouton panier)
                     $output .= '<div class="actions-group">';
