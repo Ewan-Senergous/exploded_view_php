@@ -89,24 +89,40 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                         max-height: 400px !important;
                     }
                 }
+                .product-info-row {
+                    display: flex;
+                    margin: 10px 0;
+                }
+                .product-info-row span:first-child {
+                    color: #2c5282;
+                    min-width: 120px;
+                }
+                @media (min-width: 1900px) {
+                    .product-info-row {
+                        flex-wrap: wrap;
+                    }
+                    .product-info-row span {
+                        word-break: break-word;
+                    }
+                }
                 @media (max-width: 1900px) {
                     .product-info-row {
                         flex-direction: column;
-                        margin: 15px 0 ;
+                        margin: 15px 0;
                     }
                     .product-info-row span {
-                        min-width: 100% ;
+                        min-width: 100%;
                     }
                     .actions-container {
-                        flex-direction: column ;
-                        align-items: stretch ;
-                        gap: 15px ;
+                        flex-direction: column;
+                        align-items: stretch;
+                        gap: 15px;
                     }
                     .quantity-container {
-                        justify-content: center ;
+                        justify-content: center;
                     }
                     .scroll-container {
-                    max-height: 500px;
+                        max-height: 500px;
                     }
                 }
             </style>';
