@@ -105,8 +105,8 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                 
 
                 foreach ($jsonData['table_data'] as $index => $piece) {
-                    $sku = htmlspecialchars($piece['Ref_fabriquant']);
-                    $nom_produit = htmlspecialchars($piece['Nom_produit']);
+                    $sku = htmlspecialchars($piece['reference_piece']);
+                    $nom_model = htmlspecialchars($piece['nom_model']);
                     $variation_id = get_product_variation_id_by_sku($sku);
 
                     $output .= sprintf('
@@ -118,7 +118,42 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                         <div id="accordion-%d" class="accordion-content %s">
                             <div style="background:white;border-radius:5px">
                                 %s
-                                <div class="actions-container" style="display:flex;justify-content:flex-start;align-items:start;gap:10px;margin-top:20px">
+                                <div class="actions-container" style="display:flex;justify-content:flex-start;align-items:start;gap:10px;margin-top:20px">',
+                    $index,
+                    '<strong>Position ' . ($index + 1) . '</strong>',
+                    '<strong>' . $nom_model . '</strong>',
+                    $index,
+                    $index === 0 ? 'active' : '',
+                    // Nouvelle logique pour afficher uniquement les champs souhaités
+                    implode('', array_map(function($k, $v) {
+                        // Liste des champs à exclure
+                        $excludedFields = ['panier', 'position_vue_eclatee', 'reference_vue_eclatee', 'dat_validite'];
+                        
+                        // Liste des champs à afficher avec leurs labels en français
+                        $fieldLabels = [
+                            'reference_piece' => 'Référence pièce',
+                            'nom_model' => 'Nom du modèle',
+                            'contenu_dans_kit' => 'Contenu dans kit',
+                            'nom_piece' => 'Nom de la pièce',
+                            'reference_model' => 'Référence modèle',
+                            'quantite' => 'Quantité'
+                        ];
+                        
+                        if (!empty($k) && !empty($v) && !in_array($k, $excludedFields) && isset($fieldLabels[$k])) {
+                            return sprintf(
+                                '<div class="product-info-row" style="display:flex;margin:10px 0;">
+                                    <span style="color:#2c5282;min-width:120px">%s&nbsp;:&nbsp;</span>
+                                    <span><strong>%s</strong></span>
+                                </div>',
+                                htmlspecialchars($fieldLabels[$k]),
+                                htmlspecialchars($v)
+                            );
+                        }
+                        return '';
+                    }, array_keys($piece), $piece))
+                );
+
+                    $output .= sprintf('
                                     <div class="quantity-container" style="display:flex;align-items:center;gap:10px">
                                         <label style="color:#2c5282">Quantité :</label>
                                         <div style="display:flex;align-items:center">
@@ -141,16 +176,6 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                             </div>
                         </div>
                     </div>',
-                    $index,
-                    '<strong>Position ' . ($index + 1) . '</strong>',
-                    '<strong>' . $nom_produit . '</strong>',
-                    $index,
-                    $index === 0 ? 'active' : '',
-                    implode('', array_map(fn($k, $v) => (!empty($k) && !empty($v) && $k !== "vide" && $v !== "vide") ?
-                        sprintf('<div class="product-info-row" style="display:flex;margin:10px 0;"><span style="color:#2c5282;min-width:120px">%s&nbsp;:&nbsp;</span><span>%s</span></div>',
-                        htmlspecialchars($k),
-                        ($k === 'Ref_fabriquant' || $k === 'Nom_produit') ? '<strong>' . htmlspecialchars($v) . '</strong>' : htmlspecialchars($v)
-                        ) : '', array_keys($piece), $piece)),
                     $sku,
                     $variation_id,
                     $variation_id,
