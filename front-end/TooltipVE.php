@@ -1,8 +1,12 @@
 <?php
 if (!function_exists('tooltip_ve_function')) {
 
-    function getSvgPositions() {
-        $svg_url = 'https://www.service-er.de/public/media/E885.svgz';
+    function getSvgPositions($svg_url) {
+        // Vérifie si l'URL est valide
+        if (empty($svg_url)) {
+            return ['positions' => [], 'width' => 0, 'height' => 0];
+        }
+
         $svg_content = file_get_contents($svg_url);
         if (substr($svg_content, 0, 2) === "\x1f\x8b") {
             $svg_content = gzdecode($svg_content);
@@ -43,13 +47,6 @@ if (!function_exists('tooltip_ve_function')) {
     function tooltip_ve_function() {
         ob_start();
 
-        // Récupérer les positions depuis le SVG
-        $svg_data = getSvgPositions();
-        $svg_positions = $svg_data['positions'];
-        $SVG_WIDTH = $svg_data['width'];
-        $SVG_HEIGHT = $svg_data['height'];
-        echo "<script>console.log('Positions SVG chargées:', " . json_encode($svg_positions) . ");</script>";
-
         // Récupérer le produit actuel
         $product = wc_get_product(get_the_ID()) ?? $GLOBALS['product'];
 
@@ -61,6 +58,17 @@ if (!function_exists('tooltip_ve_function')) {
                 break;
             }
         }
+
+        // Décoder le JSON et récupérer l'URL du SVG
+        $data = json_decode(preg_replace('/\s+/', ' ', $cross_ref), true);
+        $svg_url = $data['svg_url'] ?? '';
+
+        // Récupérer les positions depuis le SVG avec l'URL dynamique
+        $svg_data = getSvgPositions($svg_url);
+        $svg_positions = $svg_data['positions'];
+        $SVG_WIDTH = $svg_data['width'];
+        $SVG_HEIGHT = $svg_data['height'];
+        echo "<script>console.log('Positions SVG chargées:', " . json_encode($svg_positions) . ");</script>";
 
         // Nettoyer et décoder le JSON
         $data = json_decode(preg_replace('/\s+/', ' ', $cross_ref), true);

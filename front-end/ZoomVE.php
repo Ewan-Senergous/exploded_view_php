@@ -2,6 +2,26 @@
 if (!function_exists('zoom_ve_function')) {
     function zoom_ve_function() {
         ob_start();
+        
+        // Récupérer le produit actuel
+        $product = wc_get_product(get_the_ID()) ?? $GLOBALS['product'];
+        
+        // Récupérer l'attribut cross_ref
+        $cross_ref = '';
+        foreach ($product->get_attributes() as $attr) {
+            if (is_object($attr) && wc_attribute_label($attr->get_name()) === 'cross_ref') {
+                $cross_ref = implode(', ', $attr->get_options());
+                break;
+            }
+        }
+        
+        // Décoder le JSON et récupérer l'URL du SVG
+        $data = json_decode(preg_replace('/\s+/', ' ', $cross_ref), true);
+        $svg_url = $data['svg_url'] ?? '';
+        
+        if (empty($svg_url)) {
+            return 'SVG URL not found';
+        }
         ?>
         <style>
             .zoom-container {
@@ -63,7 +83,7 @@ if (!function_exists('zoom_ve_function')) {
         <div class="zoom-wrapper">
             <div class="zoom-container" id="zoomContainer">
                 <div class="image-container">
-                    <img src="https://www.service-er.de/public/media/E885.svgz" class="zoom-image" id="zoomImage">
+                    <img src="<?php echo esc_url($svg_url); ?>" class="zoom-image" id="zoomImage">
                 </div>
             </div>
             <!-- Uniquement les contrôles mobiles -->
