@@ -47,8 +47,13 @@ if (!function_exists('clickShowProducts_function')) {
                     accordion.content.classList.add('active');
                     accordion.header.querySelector('.arrow').innerHTML = '▲';
 
-                    // Faire défiler jusqu'à l'accordéon
-                    accordion.header.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Faire défiler jusqu'à l'accordéon en le positionnant en haut
+                    const scrollContainer = document.querySelector('.scroll-container');
+                    if (scrollContainer) {
+                        const containerTop = scrollContainer.getBoundingClientRect().top;
+                        const accordionTop = accordion.header.getBoundingClientRect().top;
+                        scrollContainer.scrollTop += (accordionTop - containerTop);
+                    }
 
                     // Changer la couleur du point correspondant
                     resetAllPoints();
