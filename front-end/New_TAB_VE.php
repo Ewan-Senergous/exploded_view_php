@@ -25,6 +25,17 @@ if (!function_exists('add_vue_eclatee_tab')) {
                     flex: 10 !important;
                 }
             }
+            @media (min-width: 1900px) {
+                .vue-eclatee-container {
+                    gap: 10px !important;
+                }
+                .vue-eclatee-left {
+                    flex: 60 !important;
+                }
+                .vue-eclatee-right {
+                    flex: 40 !important;
+                }
+            }
         </style>';
         
         echo '<div class="woocommerce-Tabs-panel woocommerce-Tabs-panel--vue-eclatee panel entry-content wc-tab" id="tab-vue-eclatee" role="tabpanel" aria-labelledby="tab-title-vue-eclatee" style="display: block;">';

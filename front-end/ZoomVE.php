@@ -27,8 +27,8 @@ if (!function_exists('zoom_ve_function')) {
             .zoom-container {
                 position: relative;
                 overflow: hidden;
-                width: 100%;
-                max-width: 1200px;
+                width: 100%; /* réduit la taille du conteneur */
+                max-width: 1000px; /* limite la largeur maximum */
                 cursor: grab;
                 background: #f5f5f5;
             }
@@ -38,7 +38,8 @@ if (!function_exists('zoom_ve_function')) {
             }
             .zoom-image {
                 width: 100%;
-                height: auto;
+                height: 100%; /* occupe toute la hauteur */
+                object-fit: cover; /* remplit l'espace */
                 transform-origin: 0 0;
                 pointer-events: none;
                 display: block;
@@ -67,6 +68,13 @@ if (!function_exists('zoom_ve_function')) {
                     display: block !important; /* Affichage uniquement en mobile */
                     margin: 10px auto;
                     width: 100%;
+                }
+            }
+            @media (min-width: 1900px) {
+                .zoom-wrapper {
+                    max-width: 1400px;
+                    margin: 0 auto;
+                    background-color: aqua;
                 }
             }
             .zoom-button {
