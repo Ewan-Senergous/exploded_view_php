@@ -11,6 +11,11 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
         return $pos >= 1 && $pos <= 1000;
     }
 
+    // Modifier la fonction pour ne vérifier que si le champ est vide
+    function isEmptyOrSpecialChar($value) {
+        return empty(trim($value)) || trim($value) === ' ';
+    }
+
     function afficher_caracteristiques_produit_v2() {
         try {
             $product = wc_get_product(get_the_ID()) ?? $GLOBALS['product'] ?? throw new Exception('Produit non trouvé');
@@ -157,14 +162,18 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                             'quantite' => 'Quantité'
                         ];
                         
-                        if (!empty($k) && !empty($v) && !in_array($k, $excludedFields) && isset($fieldLabels[$k])) {
+                        if (!in_array($k, $excludedFields) && isset($fieldLabels[$k])) {
+                            $value = isEmptyOrSpecialChar($v) 
+                                ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>' 
+                                : '<strong>' . htmlspecialchars($v) . '</strong>';
+
                             return sprintf(
                                 '<div class="product-info-row" style="display:flex;margin:10px 0;">
                                     <span style="color:#2c5282;min-width:120px">%s&nbsp;:&nbsp;</span>
-                                    <span><strong>%s</strong></span>
+                                    <span>%s</span>
                                 </div>',
                                 htmlspecialchars($fieldLabels[$k]),
-                                htmlspecialchars($v)
+                                $value
                             );
                         }
                         return '';
