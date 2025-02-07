@@ -116,39 +116,38 @@ if (!function_exists('tooltip_ve_function')) {
             // Fonction modifiée pour mettre à jour les positions des points
             function updatePointPositions() {
                 const transforms = calculateScale();
-                
-                // Utiliser l'événement zoom ou la variable globale
                 const currentZoom = window.currentZoomLevel || transforms.zoom;
 
                 document.querySelectorAll('.piece-hover').forEach(point => {
                     const originalX = parseFloat(point.getAttribute('data-original-x'));
                     const originalY = parseFloat(point.getAttribute('data-original-y'));
-                    const position = parseInt(point.getAttribute('data-position'));
+                    const position = point.getAttribute('data-position');
                     
                     const scaledX = (originalX * transforms.scaleX * transforms.zoom) + transforms.translateX;
                     const scaledY = (originalY * transforms.scaleY * transforms.zoom) + transforms.translateY;
                     
+                    // Vérifier si le point est sélectionné
+                    const isSelected = point.getAttribute('data-selected') === 'true';
+                    
                     // Changer la couleur et les dimensions en fonction du zoom
                     if (currentZoom >= 2) { // 200%
-                        // Nouvelles dimensions pour zoom 200%
+                        // Appliquer les dimensions de zoom
                         if (position >= 10 && position < 100) {
-                            point.style.width = '42px'; // Double de 21px
-                            point.style.height = '30px'; // Nouvelle hauteur fixe
-                            point.style.marginLeft = '-7px'; // Double de -3.5px
-                            point.style.marginTop = '-23px'; // Double de -11px
+                            point.style.width = '42px';
+                            point.style.height = '30px';
+                            point.style.marginLeft = '-7px';
+                            point.style.marginTop = '-23px';
                         } else if (position >= 100) {
-                            point.style.width = '54px'; // Double de 27px
-                            point.style.height = '30px'; // Nouvelle hauteur fixe
-                            point.style.marginLeft = '-7px'; // Double de -3.5px
-                            point.style.marginTop = '-23px'; // Double de -11px
+                            point.style.width = '54px';
+                            point.style.height = '30px';
+                            point.style.marginLeft = '-7px';
+                            point.style.marginTop = '-23px';
                         } else {
-                            point.style.width = '30px'; // Double de 15px
-                            point.style.height = '30px'; // Nouvelle hauteur fixe
-                            point.style.marginLeft = '-7px'; // Double de -3.5px
-                            point.style.marginTop = '-23px'; // Double de -11.5px
+                            point.style.width = '30px';
+                            point.style.height = '30px';
+                            point.style.marginLeft = '-7px';
+                            point.style.marginTop = '-23px';
                         }
-                        point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                        point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
                     } else {
                         // Dimensions originales pour zoom normal
                         if (position >= 10 && position < 100) {
@@ -167,6 +166,13 @@ if (!function_exists('tooltip_ve_function')) {
                             point.style.marginLeft = '-3.5px';
                             point.style.marginTop = '-11.5px';
                         }
+                    }
+
+                    // Appliquer les couleurs en fonction de la sélection
+                    if (isSelected) {
+                        point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
+                        point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
+                    } else {
                         point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
                         point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
                     }

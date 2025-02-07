@@ -10,6 +10,7 @@ if (!function_exists('clickShowProducts_function')) {
                 document.querySelectorAll('.piece-hover').forEach(point => {
                     point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
                     point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
+                    point.setAttribute('data-selected', 'false');
                 });
             }
 
@@ -54,6 +55,7 @@ if (!function_exists('clickShowProducts_function')) {
                     document.querySelectorAll(`.piece-hover[data-position="${position}"]`).forEach(point => {
                         point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
                         point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
+                        point.setAttribute('data-selected', 'true');
                     });
                 }
             }
