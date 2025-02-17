@@ -45,7 +45,7 @@ if (!function_exists('zoom_ve_function')) {
                 display: block;
             }
             .zoom-controls {
-                position: relative; 
+                position: relative;
                 margin-top: 10px;
                 background: rgba(0,0,0,0.7);
                 padding: 10px;

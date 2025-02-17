@@ -1,6 +1,6 @@
 <?php
 if (!function_exists('afficher_caracteristiques_produit_v2')) {
-    function get_product_variation_id_by_sku($sku) {
+    function getProductVariationIdBySku($sku) {
         return ($id = wc_get_product_id_by_sku($sku)) ? $id : 0;
     }
 
@@ -16,7 +16,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
         return empty(trim($value)) || trim($value) === ' ';
     }
 
-    function afficher_caracteristiques_produit_v2() {
+    function afficherCaracteristiquesProduitV2() {
         try {
             $product = wc_get_product(get_the_ID()) ?? $GLOBALS['product'] ?? throw new Exception('Produit non trouvé');
 
@@ -186,7 +186,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                 foreach ($filtered_data as $index => $piece) {
                     $sku = htmlspecialchars($piece['reference_piece']);
                     $nom_piece = htmlspecialchars($piece['nom_piece']);
-                    $variation_id = get_product_variation_id_by_sku($sku);
+                    $variation_id = getProductVariationIdBySku($sku);
                     $position = intval($piece['position_vue_eclatee']);
 
                     $output .= sprintf('
@@ -206,7 +206,6 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
 
                     // Remplacer la section qui affiche la référence pièce par la quantité
                     $output .= implode('', array_map(function($k, $v) {
-                   
                         
                         // N'afficher que la quantité en dehors de la dropdown
                         if ($k === 'quantite') {
@@ -417,4 +416,4 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
     }
 }
 
-echo afficher_caracteristiques_produit_v2();
+echo afficherCaracteristiquesProduitV2();

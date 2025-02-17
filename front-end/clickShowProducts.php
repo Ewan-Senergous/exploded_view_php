@@ -1,6 +1,6 @@
 <?php
-if (!function_exists('clickShowProducts_function')) {
-    function clickShowProducts_function() {
+if (!function_exists('clickShowProductsFunction')) {
+    function clickShowProductsFunction() {
         ob_start();
         ?>
         <script>
@@ -95,5 +95,5 @@ if (!function_exists('clickShowProducts_function')) {
     }
 }
 
-add_shortcode('clickShowProducts', 'clickShowProducts_function');
+add_shortcode('clickShowProducts', 'clickShowProductsFunction');
 ?>

@@ -1,5 +1,5 @@
 <?php
-if (!function_exists('tooltip_ve_function')) {
+if (!function_exists('tooltipVeFunction')) {
 
     function getSvgPositions($svg_url) {
         // Vérifie si l'URL est valide
@@ -17,12 +17,12 @@ if (!function_exists('tooltip_ve_function')) {
         preg_match('/height="([^"]*)"/', $svg_content, $height_matches);
 
         // Récupérer les valeurs
-        $SVG_WIDTH = floatval($width_matches[1]);
-        $SVG_HEIGHT = floatval($height_matches[1]);
+        $svgWidth = floatval($width_matches[1]);
+        $svgHeight = floatval($height_matches[1]);
 
         $positions = [];
         // Regex modifiée pour chercher spécifiquement les IDs de 1 à 300
-        $pattern = '/<text id="([1-9]|[1-9][0-9]|[1-2][0-9][0-9]|300)" transform="matrix\(1 0 0 1 ([0-9.-]+) ([0-9.-]+)\)">/';
+        $pattern = '/<text id="(\d|[1-9]\d|[1-2]\d\d|300)" transform="matrix\(1 0 0 1 ([\d.-]+) ([\d.-]+)\)">/';
         if (preg_match_all($pattern, $svg_content, $matches)) {
             foreach ($matches[1] as $i => $number) {
                 $x = floatval($matches[2][$i]);
@@ -41,10 +41,10 @@ if (!function_exists('tooltip_ve_function')) {
             return $a['id'] <=> $b['id'];
         });
         
-        return ['positions' => $positions, 'width' => $SVG_WIDTH, 'height' => $SVG_HEIGHT];
+        return ['positions' => $positions, 'width' => $svgWidth, 'height' => $svgHeight];
     }
 
-    function tooltip_ve_function() {
+    function tooltipVeFunction() {
         ob_start();
 
         // Récupérer le produit actuel
@@ -66,24 +66,22 @@ if (!function_exists('tooltip_ve_function')) {
         // Récupérer les positions depuis le SVG avec l'URL dynamique
         $svg_data = getSvgPositions($svg_url);
         $svg_positions = $svg_data['positions'];
-        $SVG_WIDTH = $svg_data['width'];
-        $SVG_HEIGHT = $svg_data['height'];
+        $svgWidth = $svg_data['width'];
+        $svgHeight = $svg_data['height'];
         echo "<script>console.log('Positions SVG chargées:', " . json_encode($svg_positions) . ");</script>";
 
-        // Nettoyer et décoder le JSON
-        $data = json_decode(preg_replace('/\s+/', ' ', $cross_ref), true);
         ?>
         <style>
         .piece-hover {
             position: absolute;
             cursor: pointer;
-            width: 15px; 
-            height: 15px; 
+            width: 15px;
+            height: 15px;
             border: 2px solid;
             transform-origin: center;
             pointer-events: all;
             z-index: 1000;
-            margin-left: -3.5px; 
+            margin-left: -3.5px;
             margin-top: -11.5px;
             background-color: rgba(255, 0, 0, 0.3);
             border-color: rgba(255, 0, 0, 0.5);
@@ -95,8 +93,8 @@ if (!function_exists('tooltip_ve_function')) {
             const zoomImage = document.getElementById('zoomImage');
             
             // Dimensions originales du SVG
-            const SVG_WIDTH = <?php echo $SVG_WIDTH; ?>;
-            const SVG_HEIGHT = <?php echo $SVG_HEIGHT; ?>;
+            const SVG_WIDTH = <?php echo $svgWidth; ?>;
+            const svgHeight$svgHeight = <?php echo $svgHeight; ?>;
             
             // Fonction modifiée pour calculer le facteur d'échelle et la translation
             function calculateScale() {
@@ -106,7 +104,7 @@ if (!function_exists('tooltip_ve_function')) {
                 
                 return {
                     scaleX: imageRect.width / SVG_WIDTH,
-                    scaleY: imageRect.height / SVG_HEIGHT,
+                    scaleY: imageRect.height / svgHeight$svgHeight,
                     translateX: matrix.e || 0,
                     translateY: matrix.f || 0,
                     zoom: window.scale || 1
@@ -184,21 +182,11 @@ if (!function_exists('tooltip_ve_function')) {
             }
 
             if (zoomContainer && zoomImage) {
-                <?php 
+                <?php
                 // Afficher les cercles pour toutes les positions SVG trouvées, y compris les doublons
                 if (!empty($svg_positions)) {
                     foreach ($svg_positions as $index => $position) {
-                        // Chercher si des données produit existent pour cette position
-                        $item = null;
-                        if (!empty($data['table_data'])) {
-                            foreach ($data['table_data'] as $product_data) {
-                                if (isset($product_data['Position']) && $product_data['Position'] == $position['id']) {
-                                    $item = $product_data;
-                                    break;
-                                }
-                            }
-                        }
-                ?>
+                        ?>
                         const point<?php echo $index; ?> = document.createElement('div');
                         point<?php echo $index; ?>.className = 'piece-hover';
                         point<?php echo $index; ?>.setAttribute('data-position', '<?php echo $position['id']; ?>');
@@ -295,5 +283,5 @@ if (!function_exists('tooltip_ve_function')) {
     }
 }
 
-add_shortcode('tooltip_ve', 'tooltip_ve_function');
+add_shortcode('tooltip_ve', 'tooltipVeFunction');
 ?>
