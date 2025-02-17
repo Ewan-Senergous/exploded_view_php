@@ -106,9 +106,9 @@ if (!function_exists('zoomVeFunction')) {
         <script>
             let scale = 1;
             // Modification des étapes de zoom selon le device
-            const ZOOM_STEPS = window.innerWidth <= 768 ? [400] : [100, 200];
-            const MAX_ZOOM = window.innerWidth <= 768 ? 4 : 2;
-            const MIN_ZOOM = window.innerWidth <= 768 ? 4 : 1; // Force le zoom minimum à 600% sur mobile
+            const ZOOM_STEPS = window.innerWidth <= 768 ? [300] : [100, 200];
+            const MAX_ZOOM = window.innerWidth <= 768 ? 3 : 2;
+            const MIN_ZOOM = window.innerWidth <= 768 ? 3 : 1; // Force le zoom minimum à 600% sur mobile
             
             const container = document.getElementById('zoomContainer');
             const image = document.getElementById('zoomImage');
@@ -139,7 +139,7 @@ if (!function_exists('zoomVeFunction')) {
             function findNextZoomStep(currentScale, increase) {
                 // Sur mobile, on force le zoom à 600%
                 if (window.innerWidth <= 768) {
-                    return 4; // 600%
+                    return 3; // 600%
                 }
                 
                 // Sur desktop, comportement normal
@@ -227,7 +227,7 @@ if (!function_exists('zoomVeFunction')) {
 
             // Modifier la fonction resetZoom pour tenir compte du mobile
             function resetZoom() {
-                scale = window.innerWidth <= 768 ? 4 : 1; // 600% sur mobile, 100% sur desktop
+                scale = window.innerWidth <= 768 ? 3 : 1; // 600% sur mobile, 100% sur desktop
                 translateX = 0;
                 translateY = 0;
                 updateTransform();
