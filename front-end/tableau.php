@@ -134,19 +134,23 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                 @media (min-width: 1900px) {
                     .product-info-row {
                         flex-wrap: wrap;
-                        
                     }
                     .product-info-row span {
                         word-break: break-word;
                     }
-                       
                 }
                 @media (max-width: 1900px) {
                     .product-info-row {
                         flex-direction: column;
                     }
+                    .product-info-row.quantity-row {
+                        flex-direction: row;
+                    }
                     .product-info-row span {
                         min-width: 100%;
+                    }
+                    .product-info-row.quantity-row span {
+                        min-width: unset;
                     }
                     .actions-container {
                         flex-direction: column;
@@ -225,7 +229,7 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                                 : HTML_STRONG_OPEN . htmlspecialchars($v) . HTML_STRONG_CLOSE;
 
                             return sprintf(
-                                '<div class="product-info-row" style="display:flex;">
+                                '<div class="product-info-row quantity-row" style="display:flex;">
                                     <span style="color:#2c5282">Quantité&nbsp;:&nbsp;</span>
                                     <span>%s</span>
                                 </div>',
@@ -256,9 +260,15 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                                 'contenu_dans_kit' => 'Contenu dans le kit'
                             ][$field];
                             
-                            $value = isEmptyOrSpecialChar($piece[$field])
-                                ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>'
-                                : HTML_STRONG_OPEN . htmlspecialchars($piece[$field]) . HTML_STRONG_CLOSE;
+                            if ($field === 'contenu_dans_kit') {
+                                $value = isEmptyOrSpecialChar($piece[$field])
+                                    ? '<span style="color: red; font-weight: bold;">N\'EST COMPRIS DANS AUCUN KIT</span>'
+                                    : HTML_STRONG_OPEN . htmlspecialchars($piece[$field]) . HTML_STRONG_CLOSE;
+                            } else {
+                                $value = isEmptyOrSpecialChar($piece[$field])
+                                    ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>'
+                                    : HTML_STRONG_OPEN . htmlspecialchars($piece[$field]) . HTML_STRONG_CLOSE;
+                            }
                             
                             $output .= sprintf(
                                 '<div class="product-info-row">

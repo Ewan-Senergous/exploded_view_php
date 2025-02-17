@@ -1,10 +1,11 @@
 {
   "reference": "1028590111",
-  "svg_url": "https://www.cenov-distribution.fr/wp-content/uploads/2025/02/E885.svgz",
+  "svg_url": "http://www.service-er.de/public/media/E885.svgz",
+  "nb_item_table_data": 9.0,
   "table_data": [
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "*8800",
       "reference_piece": "PRO7201706000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -17,7 +18,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "*8804",
       "reference_piece": "PRO1028590104-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -30,7 +31,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "1",
       "reference_piece": "PROZS1085327-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -43,7 +44,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "02",
       "reference_piece": "PRO6022170000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "V",
@@ -56,7 +57,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "03",
       "reference_piece": "PROZS1105068-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "D",
@@ -69,7 +70,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "04",
       "reference_piece": "PROZS1085610-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -82,7 +83,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "05",
       "reference_piece": "PROZS1085549-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -95,7 +96,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "06",
       "reference_piece": "PROZS1085550-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -108,7 +109,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "07",
       "reference_piece": "PROZS1085613-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -121,7 +122,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "08",
       "reference_piece": "PROZS1086113-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "V",
@@ -134,7 +135,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "09",
       "reference_piece": "PRO7313350000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "V",
@@ -147,7 +148,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "10",
       "reference_piece": "PRO7064590000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "D",
@@ -160,7 +161,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "11",
       "reference_piece": "PRO7064720000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "D",
@@ -173,7 +174,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "111",
       "reference_piece": "PRO5270440000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -186,7 +187,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "12",
       "reference_piece": "PROZS1105069-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "D",
@@ -199,7 +200,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "13",
       "reference_piece": "PRO6022090000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "V",
@@ -212,7 +213,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "14",
       "reference_piece": "PRO5264100000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -225,7 +226,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "15",
       "reference_piece": "PRO7062800000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "D",
@@ -238,7 +239,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "16",
       "reference_piece": "PRO6000670000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "V",
@@ -251,7 +252,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "17",
       "reference_piece": "PRO7250130000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "V",
@@ -264,11 +265,11 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "18",
       "reference_piece": "PROZS1067611-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
-      "nom_piece": "LOCK SCREW G 3/8 - 82 WITH MAGNET Ã˜7",
+      "nom_piece": "LOCK SCREW G 3/8 - 82 WITH MAGNET \u00c3\u02dc7",
       "reference_model": "1028590111",
       "quantite": 1.0,
       "reference_vue_eclatee": "E885",
@@ -277,7 +278,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "19",
       "reference_piece": "PRO7045630000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "D",
@@ -290,7 +291,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "20",
       "reference_piece": "PRO6407220000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -303,7 +304,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "201",
       "reference_piece": "PRO6104800000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -316,7 +317,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "203",
       "reference_piece": "PRO6101200000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -329,7 +330,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "205",
       "reference_piece": "PRO6104610000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -342,7 +343,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "206",
       "reference_piece": "PROZS1085628-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -355,7 +356,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "207",
       "reference_piece": "PRO6104610000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -368,7 +369,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "208",
       "reference_piece": "PRO6100590000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -381,7 +382,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "209",
       "reference_piece": "PRO6200080000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -394,7 +395,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "21",
       "reference_piece": "PRO6106990000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -407,7 +408,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "210",
       "reference_piece": "PRO6407040000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -420,7 +421,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "212",
       "reference_piece": "PRO6104610000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -433,7 +434,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "213",
       "reference_piece": "PROZS1085932-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -446,7 +447,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "213",
       "reference_piece": "PRO6121250000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -459,7 +460,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "214",
       "reference_piece": "PRO6508670000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -472,7 +473,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "215",
       "reference_piece": "PRO6200140000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -485,7 +486,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "216",
       "reference_piece": "PRO6181120000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -498,7 +499,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "217",
       "reference_piece": "PROZS1100323-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -511,7 +512,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "218",
       "reference_piece": "PRO6100670000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -524,7 +525,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "22",
       "reference_piece": "PRO7040170000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "D",
@@ -537,7 +538,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "23",
       "reference_piece": "PRO6121000000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -550,7 +551,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "30",
       "reference_piece": "PRO6280200000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -563,7 +564,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "31",
       "reference_piece": "PROZS1085331-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -576,7 +577,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "32",
       "reference_piece": "PROZS1085611-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -589,7 +590,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "33",
       "reference_piece": "PROZS1085612-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -602,7 +603,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "34",
       "reference_piece": "PROZS1085614-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "V",
@@ -615,7 +616,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "35",
       "reference_piece": "PROZS1085629-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -628,7 +629,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "36",
       "reference_piece": "PRO5264130000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -641,7 +642,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "45",
       "reference_piece": "PRO7101020000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "V",
@@ -654,7 +655,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "46",
       "reference_piece": "PROZS1085329-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -667,7 +668,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "47",
       "reference_piece": "PRO6240660000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -680,7 +681,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "48",
       "reference_piece": "PROZS1085928-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -693,7 +694,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "50",
       "reference_piece": "PRO7065180000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -706,7 +707,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "52",
       "reference_piece": "PROZS1085931-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -719,7 +720,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "54",
       "reference_piece": "PRO8405220000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -732,7 +733,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "59",
       "reference_piece": "PROZS1085924-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -745,7 +746,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "60",
       "reference_piece": "PRO6406330000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -758,7 +759,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "65",
       "reference_piece": "PROZS1143306-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -771,7 +772,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "66",
       "reference_piece": "PROZS1085621-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -784,7 +785,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "67",
       "reference_piece": "PROZS1105067-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -797,7 +798,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "68",
       "reference_piece": "PROZS1085627-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -810,7 +811,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "70",
       "reference_piece": "PRO7100350000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -823,7 +824,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "70",
       "reference_piece": "PROZS1085620-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -836,7 +837,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "71",
       "reference_piece": "PROZS1085832-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -849,7 +850,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "73",
       "reference_piece": "PROZS1104216-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -862,7 +863,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "77",
       "reference_piece": "PROZS1085619-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -875,7 +876,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "80",
       "reference_piece": "PROZS1091018-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -888,7 +889,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "81",
       "reference_piece": "PRO5296440000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -901,7 +902,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "82",
       "reference_piece": "PRO7066120000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "D",
@@ -914,7 +915,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "83",
       "reference_piece": "PRO5290700000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -927,7 +928,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "84",
       "reference_piece": "PRO6227550000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "V",
@@ -940,7 +941,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO2140126000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -953,7 +954,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO4254300000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -966,7 +967,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO4254310000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -979,7 +980,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO5147990000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -992,7 +993,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO5246950000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1005,7 +1006,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO5247860000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1018,7 +1019,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO5250000000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1031,7 +1032,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO5253570000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1044,7 +1045,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO5297740000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1057,7 +1058,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO5297750000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1070,7 +1071,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO5297760000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1083,7 +1084,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO5303120000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1096,7 +1097,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO6180040000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1109,7 +1110,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO6180160000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1122,11 +1123,11 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO7060830000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
-      "nom_piece": "PLUG Ã¸57MM R 2\" POLY6",
+      "nom_piece": "PLUG \u00c3\u00b857MM R 2\" POLY6",
       "reference_model": "1028590111",
       "quantite": 2.0,
       "reference_vue_eclatee": "E885",
@@ -1135,7 +1136,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO7065860000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "D",
@@ -1148,7 +1149,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO7160610000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1161,7 +1162,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO7163020000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1174,7 +1175,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO7163050000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1187,7 +1188,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PROZS1095595-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1200,7 +1201,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "88888",
       "reference_piece": "PRO6104400000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1213,7 +1214,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "90",
       "reference_piece": "PROZS1105066-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1226,7 +1227,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "91",
       "reference_piece": "PRO6161520000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1239,7 +1240,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "92",
       "reference_piece": "PRO6200140000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1251,8 +1252,8 @@
       "information_complementaire": ""
     },
     {
-      "panier": "88888",
-      "position_vue_eclatee": "",
+      "panier": "",
+      "position_vue_eclatee": "93",
       "reference_piece": "PRO6180090000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": " ",
@@ -1265,7 +1266,7 @@
     },
     {
       "panier": "",
-      "position_vue_eclatee": "",
+      "position_vue_eclatee": "94",
       "reference_piece": "PRO5270140000-SUP0000002",
       "nom_model": "C-VLR 301",
       "contenu_dans_kit": "D",
