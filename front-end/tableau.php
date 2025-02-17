@@ -108,7 +108,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                     .actions-group {
                         flex-direction: row;
                          gap: 10px;
-                    }    
+                    }
                 }
                 .product-content-container {
                     display: flex;
@@ -206,12 +206,12 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
 
                     // Remplacer la section qui affiche la référence pièce par la quantité
                     $output .= implode('', array_map(function($k, $v) {
-                        $excludedFields = ['panier', 'reference_vue_eclatee', 'dat_validite'];
+                   
                         
                         // N'afficher que la quantité en dehors de la dropdown
                         if ($k === 'quantite') {
-                            $value = isEmptyOrSpecialChar($v) 
-                                ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>' 
+                            $value = isEmptyOrSpecialChar($v)
+                                ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>'
                                 : '<strong>' . htmlspecialchars($v) . '</strong>';
 
                             return sprintf(
@@ -246,8 +246,8 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                                 'contenu_dans_kit' => 'Contenu dans le kit'
                             ][$field];
                             
-                            $value = isEmptyOrSpecialChar($piece[$field]) 
-                                ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>' 
+                            $value = isEmptyOrSpecialChar($piece[$field])
+                                ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>'
                                 : '<strong>' . htmlspecialchars($piece[$field]) . '</strong>';
                             
                             $output .= sprintf(
