@@ -1,6 +1,6 @@
 <?php
-if (!function_exists('zoom_ve_function')) {
-    function zoom_ve_function() {
+if (!function_exists('zoomVeFunction')) {
+    function zoomVeFunction() {
         ob_start();
         
         // Récupérer le produit actuel
@@ -14,7 +14,8 @@ if (!function_exists('zoom_ve_function')) {
                 break;
             }
         }
-        
+
+       
         // Décoder le JSON et récupérer l'URL du SVG
         $data = json_decode(preg_replace('/\s+/', ' ', $cross_ref), true);
         $svg_url = $data['svg_url'] ?? '';
@@ -79,8 +80,8 @@ if (!function_exists('zoom_ve_function')) {
             .zoom-button {
                 background: #fff;
                 border: none;
-                padding: 5px 10px; 
-                margin: 0 3px; 
+                padding: 5px 10px;
+                margin: 0 3px;
                 cursor: pointer;
                 border-radius: 3px;
                 min-width: 30px;
@@ -90,7 +91,7 @@ if (!function_exists('zoom_ve_function')) {
         <div class="zoom-wrapper">
             <div class="zoom-container" id="zoomContainer">
                 <div class="image-container">
-                    <img src="<?php echo esc_url($svg_url); ?>" class="zoom-image" id="zoomImage">
+                    <img src="<?php echo esc_url($svg_url); ?>" class="zoom-image" id="zoomImage" alt="Zoomable exploded view">
                 </div>
             </div>
             <!-- Uniquement les contrôles mobiles -->
@@ -122,7 +123,7 @@ if (!function_exists('zoom_ve_function')) {
                 document.getElementById('zoomLevel-mobile').textContent = Math.round(scale * 100) + '%';
                 
                 // Dispatch un événement personnalisé avec le niveau de zoom actuel
-                const zoomEvent = new CustomEvent('zoomLevelChanged', { 
+                const zoomEvent = new CustomEvent('zoomLevelChanged', {
                     detail: { zoom: scale }
                 });
                 window.dispatchEvent(zoomEvent);
@@ -244,4 +245,4 @@ if (!function_exists('zoom_ve_function')) {
     }
 }
 
-add_shortcode('zoom_ve', 'zoom_ve_function');
+add_shortcode('zoom_ve', 'zoomVeFunction');

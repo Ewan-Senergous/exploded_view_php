@@ -1,5 +1,16 @@
 <?php
-if (!function_exists('afficher_caracteristiques_produit_v2')) {
+if (!function_exists('afficherCaracteristiquesProduitV2')) {
+    // Définition des constantes HTML
+    define('HTML_STRONG_OPEN', '<strong>');
+    define('HTML_STRONG_CLOSE', '</strong>');
+
+    // Définition de l'exception dédiée
+    class ProductNotFoundException extends Exception {
+        public function __construct($message = "Produit non trouvé", $code = 0, Exception $previous = null) {
+            parent::__construct($message, $code, $previous);
+        }
+    }
+
     function getProductVariationIdBySku($sku) {
         return ($id = wc_get_product_id_by_sku($sku)) ? $id : 0;
     }
@@ -18,7 +29,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
 
     function afficherCaracteristiquesProduitV2() {
         try {
-            $product = wc_get_product(get_the_ID()) ?? $GLOBALS['product'] ?? throw new Exception('Produit non trouvé');
+            $product = wc_get_product(get_the_ID()) ?? $GLOBALS['product'] ?? throw new ProductNotFoundException();
 
             $cross_ref = '';
             foreach ($product->get_attributes() as $attr) {
@@ -174,7 +185,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                 
                 // Filtrer et trier les données
                 $filtered_data = array_filter($jsonData['table_data'], function($piece) {
-                    return isset($piece['position_vue_eclatee']) && 
+                    return isset($piece['position_vue_eclatee']) &&
                            isValidPosition($piece['position_vue_eclatee']);
                 });
 
@@ -198,8 +209,8 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                         <div id="accordion-%d" class="accordion-content %s">
                             <div class="product-content-container">',
                     $index,
-                    $position, // Utiliser la position réelle au lieu de ($index + 1)
-                    '<strong>' . $nom_piece . '</strong>',
+                    $position,
+                    HTML_STRONG_OPEN . $nom_piece . HTML_STRONG_CLOSE,
                     $index,
                     $index === 0 ? 'active' : ''
                 );
@@ -211,7 +222,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                         if ($k === 'quantite') {
                             $value = isEmptyOrSpecialChar($v)
                                 ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>'
-                                : '<strong>' . htmlspecialchars($v) . '</strong>';
+                                : HTML_STRONG_OPEN . htmlspecialchars($v) . HTML_STRONG_CLOSE;
 
                             return sprintf(
                                 '<div class="product-info-row" style="display:flex;">
@@ -247,7 +258,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
                             
                             $value = isEmptyOrSpecialChar($piece[$field])
                                 ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>'
-                                : '<strong>' . htmlspecialchars($piece[$field]) . '</strong>';
+                                : HTML_STRONG_OPEN . htmlspecialchars($piece[$field]) . HTML_STRONG_CLOSE;
                             
                             $output .= sprintf(
                                 '<div class="product-info-row">
@@ -410,7 +421,7 @@ if (!function_exists('afficher_caracteristiques_produit_v2')) {
 
             return $output;
 
-        } catch (Exception $e) {
+        } catch (ProductNotFoundException $e) {
             return '<div style="color:red">Erreur: ' . htmlspecialchars($e->getMessage()) . '</div>';
         }
     }
