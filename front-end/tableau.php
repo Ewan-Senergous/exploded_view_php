@@ -94,8 +94,6 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                     .zoom-controls.desktop {
                         display: none !important;
                     }
-                }
-                @media (max-width: 768px) {
                     .scroll-container {
                         max-height: 400px !important;
                     }

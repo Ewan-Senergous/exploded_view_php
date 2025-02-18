@@ -127,7 +127,26 @@ if (!function_exists('tooltipVeFunction')) {
                     // Vérifier si le point est sélectionné
                     const isSelected = point.getAttribute('data-selected') === 'true';
                     
-                    // Changer la couleur et les dimensions en fonction du zoom
+                    // Je veux pour écran inéferieur à 768 px une nouvelle width, height, marginLeft et marginTop
+                    if (window.innerWidth <= 768) {
+                        // Appliquer les dimensions de zoom
+                        if (position >= 10 && position < 100) {
+                            point.style.width = '22px';
+                            point.style.height = '20px';
+                            point.style.marginLeft = '-1.5px';
+                            point.style.marginTop = '-10.5px';
+                        } else if (position >= 100) {
+                            point.style.width = '28px';
+                            point.style.height = '20px';
+                            point.style.marginLeft = '-2.5px';
+                            point.style.marginTop = '-10.5px';
+                        } else {
+                            point.style.width = '20px';
+                            point.style.height = '20px';
+                            point.style.marginLeft = '1.5px';
+                            point.style.marginTop = '-7.5px';
+                        }
+                    } else {
                     if (currentZoom >= 2) { // 200%
                         // Appliquer les dimensions de zoom
                         if (position >= 10 && position < 100) {
@@ -165,6 +184,7 @@ if (!function_exists('tooltipVeFunction')) {
                             point.style.marginTop = '-11.5px';
                         }
                     }
+                }
 
                     // Appliquer les couleurs en fonction de la sélection
                     if (isSelected) {
