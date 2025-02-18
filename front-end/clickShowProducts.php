@@ -68,17 +68,28 @@ if (!function_exists('clickShowProductsFunction')) {
 
             // Ajouter l'écouteur de clic sur les points rouges
             document.querySelectorAll('.piece-hover').forEach(point => {
+                // Gestionnaire pour clic souris
                 point.addEventListener('click', function(e) {
+                    e.preventDefault();
                     const position = this.getAttribute('data-position');
                     if (position) {
                         openAccordionForPosition(parseInt(position));
                     }
                 });
+
+                // Ajouter gestionnaire pour événements tactiles
+                point.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    const position = this.getAttribute('data-position');
+                    if (position) {
+                        openAccordionForPosition(parseInt(position));
+                    }
+                }, { passive: false });
             });
 
             // Modifier l'écouteur de clic sur les en-têtes d'accordéon
             document.querySelectorAll('.accordion-header').forEach(header => {
-                header.addEventListener('click', function() {
+                const clickHandler = function(e) {
                     const posText = this.querySelector('span').textContent;
                     const position = parseInt(posText.match(/Position (\d+)/)[1]);
                     
@@ -86,8 +97,12 @@ if (!function_exists('clickShowProductsFunction')) {
                     document.querySelectorAll(`.piece-hover[data-position="${position}"]`).forEach(point => {
                         point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
                         point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
+                        point.setAttribute('data-selected', 'true');
                     });
-                });
+                };
+
+                header.addEventListener('click', clickHandler);
+                header.addEventListener('touchstart', clickHandler, { passive: false });
             });
         });
         </script>

@@ -189,6 +189,47 @@ if (!function_exists('zoomVeFunction')) {
                 e.preventDefault();
             });
 
+            // Ajouter la gestion des événements tactiles
+            let touchStartX, touchStartY;
+            
+            container.addEventListener('touchstart', function(e) {
+                if (e.touches.length === 1) {
+                    isDragging = true;
+                    const touch = e.touches[0];
+                    startX = touch.clientX - translateX;
+                    startY = touch.clientY - translateY;
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                    e.preventDefault();
+                }
+            });
+
+            container.addEventListener('touchmove', function(e) {
+                if (!isDragging) return;
+                
+                const touch = e.touches[0];
+                translateX = touch.clientX - startX;
+                translateY = touch.clientY - startY;
+                
+                updateTransform();
+                e.preventDefault();
+            });
+
+            container.addEventListener('touchend', function(e) {
+                isDragging = false;
+                e.preventDefault();
+            });
+
+            container.addEventListener('touchcancel', function(e) {
+                isDragging = false;
+                e.preventDefault();
+            });
+
+            // Empêcher le défilement de la page pendant le déplacement
+            container.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+
             window.addEventListener('mousemove', function(e) {
                 if (!isDragging) return;
                 
