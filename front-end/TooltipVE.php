@@ -150,36 +150,36 @@ if (!function_exists('tooltipVeFunction')) {
                     if (currentZoom >= 2) { // 200%
                         // Appliquer les dimensions de zoom
                         if (position >= 10 && position < 100) {
-                            point.style.width = '42px';
-                            point.style.height = '30px';
+                            point.style.width = '39px';
+                            point.style.height = '32px';
                             point.style.marginLeft = '-7px';
                             point.style.marginTop = '-23px';
                         } else if (position >= 100) {
-                            point.style.width = '54px';
-                            point.style.height = '30px';
+                            point.style.width = '49px';
+                            point.style.height = '32px';
                             point.style.marginLeft = '-7px';
                             point.style.marginTop = '-23px';
                         } else {
                             point.style.width = '30px';
-                            point.style.height = '30px';
+                            point.style.height = '32px';
                             point.style.marginLeft = '-7px';
                             point.style.marginTop = '-23px';
                         }
                     } else {
                         // Dimensions originales pour zoom normal
                         if (position >= 10 && position < 100) {
-                            point.style.width = '21px';
-                            point.style.height = '15px';
+                            point.style.width = '20px';
+                            point.style.height = '16px';
                             point.style.marginLeft = '-3.5px';
                             point.style.marginTop = '-11px';
                         } else if (position >= 100) {
-                            point.style.width = '27px';
-                            point.style.height = '15px';
+                            point.style.width = '25px';
+                            point.style.height = '16px';
                             point.style.marginLeft = '-3.5px';
                             point.style.marginTop = '-11px';
                         } else {
                             point.style.width = '15px';
-                            point.style.height = '15px';
+                            point.style.height = '16px';
                             point.style.marginLeft = '-3.5px';
                             point.style.marginTop = '-11.5px';
                         }
