@@ -9,8 +9,8 @@ if (!function_exists('clickShowProductsFunction')) {
             // Change couleur rouge en aqua
             function resetAllPoints() {
                 document.querySelectorAll('.piece-hover').forEach(point => {
-                    point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                    point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
+                    point.style.backgroundColor = 'rgba(75, 181, 67, 0.3)';
+                    point.style.borderColor = 'rgba(34, 139, 34, 0.5)';
                     point.setAttribute('data-selected', 'false');
                 });
             }

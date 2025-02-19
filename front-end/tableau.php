@@ -100,6 +100,7 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                     .red-alert {
                         flex-direction: column-reverse;
                 }
+                }
                 .product-info-row {
                     display: flex;
                     margin: 0;

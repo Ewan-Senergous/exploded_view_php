@@ -83,8 +83,8 @@ if (!function_exists('tooltipVeFunction')) {
             z-index: 1000;
             margin-left: -3.5px;
             margin-top: -11.5px;
-            background-color: rgba(255, 0, 0, 0.3);
-            border-color: rgba(255, 0, 0, 0.5);
+            background-color: rgba(75, 181, 67, 0.3);
+            border-color: rgba(34, 139, 34, 0.5);
         }
         </style>
         <script>
@@ -191,8 +191,8 @@ if (!function_exists('tooltipVeFunction')) {
                         point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
                         point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
                     } else {
-                        point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                        point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
+                        point.style.backgroundColor = 'rgba(75, 181, 67, 0.3)';
+                        point.style.borderColor = 'rgba(34, 139, 34, 0.5)';
                     }
                     
                     point.style.transform = `translate(${scaledX}px, ${scaledY}px) scale(${transforms.zoom})`;
