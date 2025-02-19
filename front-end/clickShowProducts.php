@@ -35,6 +35,15 @@ if (!function_exists('clickShowProductsFunction')) {
             function openAccordionForPosition(position) {
                 const accordion = findAccordionByPosition(position);
                 
+                document.querySelectorAll('.piece-hover').forEach(point => {
+                    if (point.getAttribute('data-position') === position.toString()) {
+                        // Mettre à jour uniquement l'état sans modifier directement les couleurs
+                        point.setAttribute('data-state', 'selected');
+                    } else {
+                        point.setAttribute('data-state', point.getAttribute('data-exists') === 'true' ? 'normal' : 'invalid');
+                    }
+                });
+
                 if (accordion) {
                     // Fermer tous les accordéons d'abord
                     document.querySelectorAll('.accordion-content').forEach(content => {

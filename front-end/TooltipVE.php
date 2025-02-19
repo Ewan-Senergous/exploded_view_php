@@ -111,6 +111,33 @@ if (!function_exists('tooltipVeFunction')) {
                 };
             }
 
+            // Nouvelle fonction pour gérer la coloration des points
+            function initializePointColors() {
+                const validPositions = new Set();
+                // Récupérer toutes les positions valides depuis les accordéons
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    const posText = header.querySelector('span').textContent;
+                    const pos = parseInt(posText.match(/Position (\d+)/)[1]);
+                    validPositions.add(pos);
+                });
+
+                // Appliquer les couleurs initiales et sauvegarder l'état
+                document.querySelectorAll('.piece-hover').forEach(point => {
+                    const position = parseInt(point.getAttribute('data-position'));
+                    const exists = validPositions.has(position);
+                    
+                    // Sauvegarder l'état dans un attribut data
+                    point.setAttribute('data-exists', exists.toString());
+                    point.setAttribute('data-state', exists ? 'normal' : 'invalid');
+                    
+                    // Appliquer la couleur initiale
+                    if (!exists) {
+                        point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+                        point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
+                    }
+                });
+            }
+
             // Fonction modifiée pour mettre à jour les positions des points
             function updatePointPositions() {
                 const transforms = calculateScale();
@@ -187,18 +214,38 @@ if (!function_exists('tooltipVeFunction')) {
                 }
 
                     // Appliquer les couleurs en fonction de la sélection
-                    if (isSelected) {
-                        point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
-                        point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
-                    } else {
-                        point.style.backgroundColor = 'rgba(75, 181, 67, 0.3)';
-                        point.style.borderColor = 'rgba(34, 139, 34, 0.5)';
+                    const state = point.getAttribute('data-state');
+                    switch(state) {
+                        case 'invalid':
+                            point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+                            point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
+                            break;
+                        case 'selected':
+                            point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
+                            point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
+                            break;
+                        default: // normal
+                            point.style.backgroundColor = 'rgba(75, 181, 67, 0.3)';
+                            point.style.borderColor = 'rgba(34, 139, 34, 0.5)';
                     }
                     
                     point.style.transform = `translate(${scaledX}px, ${scaledY}px) scale(${transforms.zoom})`;
                     point.style.left = '0';
                     point.style.top = '0';
                 });
+            }
+
+            // Ajouter la fonction de vérification des positions existantes
+            function positionExists(position) {
+                const headers = document.querySelectorAll('.accordion-header');
+                for (let header of headers) {
+                    const posText = header.querySelector('span').textContent;
+                    const pos = parseInt(posText.match(/Position (\d+)/)[1]);
+                    if (pos === parseInt(position)) {
+                        return true;
+                    }
+                }
+                return false;
             }
 
             if (zoomContainer && zoomImage) {
@@ -212,6 +259,15 @@ if (!function_exists('tooltipVeFunction')) {
                         point<?php echo $index; ?>.setAttribute('data-position', '<?php echo $position['id']; ?>');
                         point<?php echo $index; ?>.setAttribute('data-original-x', '<?php echo $position['x']; ?>');
                         point<?php echo $index; ?>.setAttribute('data-original-y', '<?php echo $position['y']; ?>');
+
+                        // Initialiser la couleur en fonction de l'existence de la position
+                        if (!positionExists(<?php echo $position['id']; ?>)) {
+                            point<?php echo $index; ?>.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+                            point<?php echo $index; ?>.style.borderColor = 'rgba(255, 0, 0, 0.5)';
+                        } else {
+                            point<?php echo $index; ?>.style.backgroundColor = 'rgba(75, 181, 67, 0.3)';
+                            point<?php echo $index; ?>.style.borderColor = 'rgba(34, 139, 34, 0.5)';
+                        }
 
                         // Ajuster la taille selon l'ID
                         if (<?php echo $position['id']; ?> >= 10 && <?php echo $position['id']; ?> < 100) {
@@ -232,6 +288,7 @@ if (!function_exists('tooltipVeFunction')) {
 
                 // Initialisation et observateurs
                 updatePointPositions();
+                initializePointColors();
                 
                 const resizeObserver = new ResizeObserver(() => {
                     updatePointPositions();
