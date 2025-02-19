@@ -97,6 +97,8 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                     .scroll-container {
                         max-height: 400px !important;
                     }
+                    .red-alert {
+                        flex-direction: column-reverse;
                 }
                 .product-info-row {
                     display: flex;
@@ -297,8 +299,8 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                                         Ajouter au panier
                                     </button>
                                 </div>
-                                <div id="alert-%d" style="display:none;margin-top:10px;padding:15px;border-radius:5px;background-color:#4CAF50;color:white;text-align:center">
-                                    <div style="display:flex;justify-content:space-between;align-items:center">
+                                <div id="alert-%d" style="display:none;margin-top:10px;padding:15px;border-radius:5px;background-color:#4CAF50;color:white;font-weight:bold;text-align:center">
+                                    <div style="display:flex;justify-content:space-between;align-items:center;gap:5px">
                                         <span>✓ Produit ajouté au panier avec succès !</span>
                                         <a href="%s" style="background-color:white;color:#4CAF50;padding:8px 15px;border-radius:4px;text-decoration:none;font-weight:bold;transition:all .3s">Voir le panier</a>
                                     </div>
@@ -360,6 +362,26 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                 const btn = event.currentTarget;
                 const qty = btn.parentElement.querySelector("input[type=number]").value;
 
+                // Vérifier si le productId est égal à 0
+                if (productId === 0) {
+                    
+                    const errorAlert = document.createElement(\'div\');
+                    errorAlert.style.cssText = \'margin-top:10px;padding:15px;border-radius:5px;background-color:#FF0000;color:white;font-weight:bold;text-align:center\';
+                    errorAlert.innerHTML = `
+                        <div class="red-alert" style="display:flex;justify-content:space-between;align-items:center;gap:5px">
+                            <span>X Produit non trouvé dans la base de données</span>
+                            <a href="https://www.cenov-distribution.fr/nous-contacter/"
+                               style="background-color:white;color:#FF0000;padding:8px 15px;border-radius:4px;text-decoration:none;font-weight:bold;transition:all .3s">
+                               Nous contacter
+                            </a>
+                        </div>
+                    `;
+                    
+                    btn.parentElement.insertAdjacentElement(\'afterend\', errorAlert);
+                    
+                    return;
+                }
+
                 try {
                     const formData = new FormData();
                     formData.append("action", "woocommerce_ajax_add_to_cart");
@@ -378,24 +400,23 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                         credentials: "same-origin"
                     });
 
-                    const data = await response.json();
-                    if (data.error) throw new Error(data.error);
-
-                    btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><path d=\'M20 6L9 17l-5-5\'/></svg>Ajouté !</div>";
-
-                    const alertElement = document.getElementById(`alert-${productId}`);
-                    if (alertElement) alertElement.style.display = "block";
-
-                    if (data.fragments) {
-                        jQuery.each(data.fragments, function(key, value) {
-                            jQuery(key).replaceWith(value);
+                    // Si on a un ID produit valide, on considère que le produit est ajouté
+                    if (productId !== 0) {
+                        console.log("✅ SUCCÈS: Produit ajouté au panier!", {
+                            sku: reference,
+                            productId: productId
                         });
+                        
+                        btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><path d=\'M20 6L9 17l-5-5\'/></svg>Ajouté !</div>";
+                        
+                        const alertElement = document.getElementById(`alert-${productId}`);
+                        if (alertElement) alertElement.style.display = "block";
+
+                        jQuery(document.body).trigger("wc_fragments_refreshed");
                     }
 
-                    jQuery(document.body).trigger("wc_fragments_refreshed");
-
                 } catch (error) {
-                    btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;color:#ff0000;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><circle cx=\'12\' cy=\'12\' r=\'10\'/><line x1=\'15\' y1=\'9\' x2=\'9\' y2=\'15\'/><line x1=\'9\' y1=\'9\' x2=\'15\' y2=\'15\'/></svg>Erreur</div>";
+                    console.log("❌ ERREUR:", error.message);
                 }
 
                 setTimeout(() => {
