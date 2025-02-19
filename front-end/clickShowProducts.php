@@ -9,8 +9,16 @@ if (!function_exists('clickShowProductsFunction')) {
             // Change couleur rouge en aqua
             function resetAllPoints() {
                 document.querySelectorAll('.piece-hover').forEach(point => {
-                    point.style.backgroundColor = 'rgba(75, 181, 67, 0.3)';
-                    point.style.borderColor = 'rgba(34, 139, 34, 0.5)';
+                    // Vérifier si le point est invalide avant de réinitialiser sa couleur
+                    const exists = point.getAttribute('data-exists') === 'true';
+                    if (exists) {
+                        point.style.backgroundColor = 'rgba(75, 181, 67, 0.3)';
+                        point.style.borderColor = 'rgba(34, 139, 34, 0.5)';
+                    } else {
+                        // Maintenir la couleur rouge pour les points invalides
+                        point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+                        point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
+                    }
                     point.setAttribute('data-selected', 'false');
                 });
             }
@@ -34,6 +42,8 @@ if (!function_exists('clickShowProductsFunction')) {
             // Fonction modifiée pour ouvrir l'accordéon correspondant à la position
             function openAccordionForPosition(position) {
                 const accordion = findAccordionByPosition(position);
+                
+                resetAllPoints();
                 
                 document.querySelectorAll('.piece-hover').forEach(point => {
                     if (point.getAttribute('data-position') === position.toString()) {
@@ -66,11 +76,12 @@ if (!function_exists('clickShowProductsFunction')) {
                     }
 
                     // Changer la couleur du point correspondant
-                    resetAllPoints();
                     document.querySelectorAll(`.piece-hover[data-position="${position}"]`).forEach(point => {
-                        point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
-                        point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
-                        point.setAttribute('data-selected', 'true');
+                        if (point.getAttribute('data-exists') === 'true') {
+                            point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
+                            point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
+                            point.setAttribute('data-selected', 'true');
+                        }
                     });
                 }
             }
