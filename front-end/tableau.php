@@ -1,364 +1,460 @@
 <?php
-if (!function_exists('tooltipVeFunction')) {
+if (!function_exists('afficherCaracteristiquesProduitV2')) {
+    // Définition des constantes HTML
+    define('HTML_STRONG_OPEN', '<strong>');
+    define('HTML_STRONG_CLOSE', '</strong>');
 
-    function getSvgPositions($svg_url) {
-        // Vérifie si l'URL est valide
-        if (empty($svg_url)) {
-            return ['positions' => [], 'width' => 0, 'height' => 0];
+    // Définition de l'exception dédiée
+    class ProductNotFoundException extends Exception {
+        public function __construct($message = "Produit non trouvé", $code = 0, Exception $previous = null) {
+            parent::__construct($message, $code, $previous);
         }
-
-        $svg_content = file_get_contents($svg_url);
-        if (substr($svg_content, 0, 2) === "\x1f\x8b") {
-            $svg_content = gzdecode($svg_content);
-        }
-
-        // Extraire width et height avec des expressions régulières
-        preg_match('/width="([^"]*)"/', $svg_content, $width_matches);
-        preg_match('/height="([^"]*)"/', $svg_content, $height_matches);
-
-        // Récupérer les valeurs
-        $svgWidth = floatval($width_matches[1]);
-        $svgHeight = floatval($height_matches[1]);
-
-        $positions = [];
-        // Regex modifiée pour chercher spécifiquement les IDs de 1 à 300
-        $pattern = '/<text id="(\d|[1-9]\d|[1-2]\d\d|300)" transform="matrix\(1 0 0 1 ([\d.-]+) ([\d.-]+)\)">/';
-        if (preg_match_all($pattern, $svg_content, $matches)) {
-            foreach ($matches[1] as $i => $number) {
-                $x = floatval($matches[2][$i]);
-                $y = floatval($matches[3][$i]);
-                // Conserver tous les doublons en stockant chaque position sans écrasement
-                $positions[] = [
-                    'id' => $number,
-                    'x'  => $x,
-                    'y'  => $y
-                ];
-            }
-        }
-
-        // Tri des positions par 'id' pour conserver l'ordre
-        usort($positions, function($a, $b) {
-            return $a['id'] <=> $b['id'];
-        });
-        
-        return ['positions' => $positions, 'width' => $svgWidth, 'height' => $svgHeight];
     }
 
-    function tooltipVeFunction() {
-        ob_start();
+    function getProductVariationIdBySku($sku) {
+        return ($id = wc_get_product_id_by_sku($sku)) ? $id : 0;
+    }
 
-        // Récupérer le produit actuel
-        $product = wc_get_product(get_the_ID()) ?? $GLOBALS['product'];
+    // Nouvelle fonction pour valider la position
+    function isValidPosition($position) {
+        // Convertir en entier et vérifier si c'est un nombre entre 1 et 1000
+        $pos = intval($position);
+        return $pos >= 1 && $pos <= 1000;
+    }
 
-        // Récupérer l'attribut cross_ref
-        $cross_ref = '';
-        foreach ($product->get_attributes() as $attr) {
-            if (is_object($attr) && wc_attribute_label($attr->get_name()) === 'cross_ref') {
-                $cross_ref = implode(', ', $attr->get_options());
-                break;
+    // Modifier la fonction pour ne vérifier que si le champ est vide
+    function isEmptyOrSpecialChar($value) {
+        return empty(trim($value)) || trim($value) === ' ';
+    }
+
+    function afficherCaracteristiquesProduitV2() {
+        try {
+            $product = wc_get_product(get_the_ID()) ?? $GLOBALS['product'] ?? throw new ProductNotFoundException();
+
+            $cross_ref = '';
+            foreach ($product->get_attributes() as $attr) {
+                if (is_object($attr) && wc_attribute_label($attr->get_name()) === 'cross_ref') {
+                    $cross_ref = implode(', ', $attr->get_options());
+                    break;
+                }
             }
-        }
 
-        // Décoder le JSON et récupérer l'URL du SVG
-        $data = json_decode(preg_replace('/\s+/', ' ', $cross_ref), true);
-        $svg_url = $data['svg_url'] ?? '';
+            $jsonData = json_decode(preg_replace('/\s+/', ' ', $cross_ref), true);
 
-        // Récupérer les positions depuis le SVG avec l'URL dynamique
-        $svg_data = getSvgPositions($svg_url);
-        $svg_positions = $svg_data['positions'];
-        $svgWidth = $svg_data['width'];
-        $svgHeight = $svg_data['height'];
-        echo "<script>console.log('Positions SVG chargées:', " . json_encode($svg_positions) . ");</script>";
+            $output = '<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+            <style>
+                * {
+                    font-family: "Poppins", sans-serif;
+                    font-size: 18px;
+                }
+                .add-to-cart-btn{background:#FF5733;transition:background-color .3s}
+                .add-to-cart-btn:hover{background:#FF774D!important}
+                .accordion {
+                    margin-bottom: 15px;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    position: relative;
+                }
+                .accordion-header {
+                    background: #0056B3;
+                    color: white;
+                    padding: 15px 20px;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    font-size: 18px;
+                }
+                .position-text {
+                    font-weight: 600;
+                    font-size: 18px;
+                }
+                .product-name {
+                    font-weight: 600;
+                    font-size: 18px;
+                }
+                .accordion-content {
+                    display: none;
+                    padding: 25px;
+                    background: white;
+                    border: 1px solid #e2e8f0;
+                    font-size: 18px;
+                }
+                .accordion-content.active {
+                    display: block;
+                }
+                .scroll-container {
+                    max-height: 600px;
+                    overflow-y: auto;
+                }
+                .zoom-controls.desktop {
+                    display: block;
+                }
+                @media (max-width: 768px) {
+                    .zoom-controls.desktop {
+                        display: none !important;
+                    }
+                    .scroll-container {
+                        max-height: 400px !important;
+                    }
+                    .red-alert {
+                        flex-direction: column-reverse;
+                }
+                }
+                .product-info-row {
+                    display: flex;
+                    margin: 0;
+                }
+                .details-dropdown {
+                    margin: 0;
+                }
+                .actions-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+                @media (min-width: 1900px) {
+                    .product-content-container {
+                        gap: 25px;
+                    }
+                    .actions-group {
+                        flex-direction: row;
+                         gap: 10px;
+                    }
+                }
+                .product-content-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+                .accordion-content > div {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+                @media (min-width: 1900px) {
+                    .product-info-row {
+                        flex-wrap: wrap;
+                    }
+                    .product-info-row span {
+                        word-break: break-word;
+                    }
+                }
+                @media (max-width: 1900px) {
+                    .product-info-row {
+                        flex-direction: column;
+                    }
+                    .product-info-row.quantity-row {
+                        flex-direction: row;
+                    }
+                    .product-info-row span {
+                        min-width: 100%;
+                    }
+                    .product-info-row.quantity-row span {
+                        min-width: unset;
+                    }
+                    .actions-container {
+                        flex-direction: column;
+                        align-items: stretch;
+                        gap: 15px;
+                    }
+                    .scroll-container {
+                        max-height: 500px;
+                    }
+                }
+                .details-dropdown {
+                    border: 1px solid #e2e8f0;
+                    border-radius: 5px;
+                }
+                .dropdown-header {
+                    background: #f8fafc;
+                    padding: 10px 15px;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    border-radius: 5px;
+                }
+                .dropdown-content {
+                    display: none;
+                    padding: 15px;
+                }
+                .dropdown-content.show {
+                    display: block;
+                }
+            </style>';
 
-        ?>
-        <style>
-        .piece-hover {
-            position: absolute;
-            cursor: pointer;
-            width: 15px;
-            height: 15px;
-            border: 2px solid;
-            transform-origin: center;
-            pointer-events: all;
-            z-index: 1000;
-            margin-left: -3.5px;
-            margin-top: -11.5px;
-            background-color: rgba(75, 181, 67, 0.3);
-            border-color: rgba(34, 139, 34, 0.5);
-        }
-        </style>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const zoomContainer = document.getElementById('zoomContainer');
-            const zoomImage = document.getElementById('zoomImage');
-            
-            // Dimensions originales du SVG
-            const SVG_WIDTH = <?php echo $svgWidth; ?>;
-            const svgHeight$svgHeight = <?php echo $svgHeight; ?>;
-            
-            // Fonction modifiée pour calculer le facteur d'échelle et la translation
-            function calculateScale() {
-                const imageRect = zoomImage.getBoundingClientRect();
-                const transform = window.getComputedStyle(zoomImage).transform;
-                const matrix = new DOMMatrixReadOnly(transform);
+            // Dans votre tableau.php
+            if (isset($jsonData['table_data'])) {
+                $output .= '<div id="scroll-container" class="scroll-container">';
                 
-                return {
-                    scaleX: imageRect.width / SVG_WIDTH,
-                    scaleY: imageRect.height / svgHeight$svgHeight,
-                    translateX: matrix.e || 0,
-                    translateY: matrix.f || 0,
-                    zoom: window.scale || 1
-                };
-            }
-
-            // Nouvelle fonction pour gérer la coloration des points
-            function initializePointColors() {
-                const validPositions = new Set();
-                // Récupérer toutes les positions valides depuis les accordéons
-                document.querySelectorAll('.accordion-header').forEach(header => {
-                    const posText = header.querySelector('span').textContent;
-                    const pos = parseInt(posText.match(/Position (\d+)/)[1]);
-                    validPositions.add(pos);
+                // Filtrer et trier les données
+                $filtered_data = array_filter($jsonData['table_data'], function($piece) {
+                    return isset($piece['position_vue_eclatee']) &&
+                           isValidPosition($piece['position_vue_eclatee']);
                 });
 
-                // Appliquer les couleurs initiales et sauvegarder l'état
-                document.querySelectorAll('.piece-hover').forEach(point => {
-                    const position = parseInt(point.getAttribute('data-position'));
-                    const exists = validPositions.has(position);
-                    
-                    // Sauvegarder l'état dans un attribut data
-                    point.setAttribute('data-exists', exists.toString());
-                    point.setAttribute('data-state', exists ? 'normal' : 'invalid');
-                    
-                    // Appliquer la couleur initiale
-                    if (!exists) {
-                        point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                        point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
-                    }
+                // Trier par position
+                usort($filtered_data, function($a, $b) {
+                    return intval($a['position_vue_eclatee']) - intval($b['position_vue_eclatee']);
                 });
-            }
 
-            // Fonction modifiée pour mettre à jour les positions des points
-            function updatePointPositions() {
-                const transforms = calculateScale();
-                const currentZoom = window.currentZoomLevel || transforms.zoom;
+                foreach ($filtered_data as $index => $piece) {
+                    $sku = htmlspecialchars($piece['reference_piece']);
+                    $nom_piece = htmlspecialchars($piece['nom_piece']);
+                    $variation_id = getProductVariationIdBySku($sku);
+                    $position = intval($piece['position_vue_eclatee']);
 
-                document.querySelectorAll('.piece-hover').forEach(point => {
-                    const originalX = parseFloat(point.getAttribute('data-original-x'));
-                    const originalY = parseFloat(point.getAttribute('data-original-y'));
-                    const position = point.getAttribute('data-position');
-                    
-                    const scaledX = (originalX * transforms.scaleX * transforms.zoom) + transforms.translateX;
-                    const scaledY = (originalY * transforms.scaleY * transforms.zoom) + transforms.translateY;
-                    
-                    // Vérifier si le point est sélectionné
-                    const isSelected = point.getAttribute('data-selected') === 'true';
-                    
-                    // Je veux pour écran inéferieur à 768 px une nouvelle width, height, marginLeft et marginTop
-                    if (window.innerWidth <= 768) {
-                        // Appliquer les dimensions de zoom
-                        if (position >= 10 && position < 100) {
-                            point.style.width = '22px';
-                            point.style.height = '20px';
-                            point.style.marginLeft = '-1.5px';
-                            point.style.marginTop = '-10.5px';
-                        } else if (position >= 100) {
-                            point.style.width = '28px';
-                            point.style.height = '20px';
-                            point.style.marginLeft = '-2.5px';
-                            point.style.marginTop = '-10.5px';
-                        } else {
-                            point.style.width = '20px';
-                            point.style.height = '20px';
-                            point.style.marginLeft = '1.5px';
-                            point.style.marginTop = '-7.5px';
-                        }
-                    } else {
-                    if (currentZoom >= 2) { // 200%
-                        // Appliquer les dimensions de zoom
-                        if (position >= 10 && position < 100) {
-                            point.style.width = '39px';
-                            point.style.height = '32px';
-                            point.style.marginLeft = '-7px';
-                            point.style.marginTop = '-23px';
-                        } else if (position >= 100) {
-                            point.style.width = '49px';
-                            point.style.height = '32px';
-                            point.style.marginLeft = '-7px';
-                            point.style.marginTop = '-23px';
-                        } else {
-                            point.style.width = '30px';
-                            point.style.height = '32px';
-                            point.style.marginLeft = '-7px';
-                            point.style.marginTop = '-23px';
-                        }
-                    } else {
-                        // Dimensions originales pour zoom normal
-                        if (position >= 10 && position < 100) {
-                            point.style.width = '20px';
-                            point.style.height = '16px';
-                            point.style.marginLeft = '-3.5px';
-                            point.style.marginTop = '-11px';
-                        } else if (position >= 100) {
-                            point.style.width = '25px';
-                            point.style.height = '16px';
-                            point.style.marginLeft = '-3.5px';
-                            point.style.marginTop = '-11px';
-                        } else {
-                            point.style.width = '15px';
-                            point.style.height = '16px';
-                            point.style.marginLeft = '-3.5px';
-                            point.style.marginTop = '-11.5px';
-                        }
-                    }
-                }
+                    $output .= sprintf('
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(%d, event)">
+                            <span>Position %d - <span class="product-name">%s</span></span>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div id="accordion-%d" class="accordion-content %s">
+                            <div class="product-content-container">',
+                    $index,
+                    $position,
+                    HTML_STRONG_OPEN . $nom_piece . HTML_STRONG_CLOSE,
+                    $index,
+                    $index === 0 ? 'active' : ''
+                );
 
-                    // Appliquer les couleurs en fonction de la sélection
-                    const state = point.getAttribute('data-state');
-                    switch(state) {
-                        case 'invalid':
-                            point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                            point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
-                            break;
-                        case 'selected':
-                            point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
-                            point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
-                            break;
-                        default: // normal
-                            point.style.backgroundColor = 'rgba(75, 181, 67, 0.3)';
-                            point.style.borderColor = 'rgba(34, 139, 34, 0.5)';
-                    }
-                    
-                    point.style.transform = `translate(${scaledX}px, ${scaledY}px) scale(${transforms.zoom})`;
-                    point.style.left = '0';
-                    point.style.top = '0';
-                });
-            }
-
-            // Ajouter la fonction de vérification des positions existantes
-            function positionExists(position) {
-                const headers = document.querySelectorAll('.accordion-header');
-                for (let header of headers) {
-                    const posText = header.querySelector('span').textContent;
-                    const pos = parseInt(posText.match(/Position (\d+)/)[1]);
-                    if (pos === parseInt(position)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            if (zoomContainer && zoomImage) {
-                <?php
-                // Afficher les cercles pour toutes les positions SVG trouvées, y compris les doublons
-                if (!empty($svg_positions)) {
-                    foreach ($svg_positions as $index => $position) {
-                        ?>
-                        const point<?php echo $index; ?> = document.createElement('div');
-                        point<?php echo $index; ?>.className = 'piece-hover';
-                        point<?php echo $index; ?>.setAttribute('data-position', '<?php echo $position['id']; ?>');
-                        point<?php echo $index; ?>.setAttribute('data-original-x', '<?php echo $position['x']; ?>');
-                        point<?php echo $index; ?>.setAttribute('data-original-y', '<?php echo $position['y']; ?>');
-
-                        // Initialiser la couleur en fonction de l'existence de la position
-                        if (!positionExists(<?php echo $position['id']; ?>)) {
-                            point<?php echo $index; ?>.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                            point<?php echo $index; ?>.style.borderColor = 'rgba(255, 0, 0, 0.5)';
-                        } else {
-                            point<?php echo $index; ?>.style.backgroundColor = 'rgba(75, 181, 67, 0.3)';
-                            point<?php echo $index; ?>.style.borderColor = 'rgba(34, 139, 34, 0.5)';
-                        }
-
-                        // Ajuster la taille selon l'ID
-                        if (<?php echo $position['id']; ?> >= 10 && <?php echo $position['id']; ?> < 100) {
-                            point<?php echo $index; ?>.style.width = '21px';
-                            point<?php echo $index; ?>.style.marginLeft = '-3.5px';
-                            point<?php echo $index; ?>.style.marginTop = '-11px';
-                        } else if (<?php echo $position['id']; ?> >= 100) {
-                            point<?php echo $index; ?>.style.width = '27px';
-                            point<?php echo $index; ?>.style.marginLeft = '-3.5px';
-                            point<?php echo $index; ?>.style.marginTop = '-11px';
-                        }
+                    // Remplacer la section qui affiche la référence pièce par la quantité
+                    $output .= implode('', array_map(function($k, $v) {
                         
-                        zoomContainer.appendChild(point<?php echo $index; ?>);
-                <?php
+                        // N'afficher que la quantité en dehors de la dropdown
+                        if ($k === 'quantite') {
+                            $value = isEmptyOrSpecialChar($v)
+                                ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>'
+                                : HTML_STRONG_OPEN . htmlspecialchars($v) . HTML_STRONG_CLOSE;
+
+                            return sprintf(
+                                '<div class="product-info-row quantity-row" style="display:flex;">
+                                    <span style="color:#2c5282">Quantité&nbsp;:&nbsp;</span>
+                                    <span>%s</span>
+                                </div>',
+                                $value
+                            );
+                        }
+                        return '';
+                    }, array_keys($piece), $piece));
+
+                    // Ajouter la dropdown list avec toutes les autres informations
+                    $output .= '
+                    <div class="details-dropdown">
+                        <div class="dropdown-header" onclick="toggleDropdown(this)">
+                            <span>Détails supplémentaires</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </div>
+                        <div class="dropdown-content">';
+
+                    // Définir l'ordre spécifique des champs
+                    $orderedFields = ['nom_model', 'reference_model', 'reference_piece', 'contenu_dans_kit'];
+                    foreach ($orderedFields as $field) {
+                        if (isset($piece[$field])) {
+                            $label = [
+                                'nom_model' => 'Nom du modèle',
+                                'reference_model' => 'Référence modèle',
+                                'reference_piece' => 'Référence pièce',
+                                'nom_piece' => 'Nom de la pièce',
+                                'contenu_dans_kit' => 'Contenu dans le kit'
+                            ][$field];
+                            
+                            if ($field === 'contenu_dans_kit') {
+                                $value = isEmptyOrSpecialChar($piece[$field])
+                                    ? '<span style="color: red; font-weight: bold;">N\'EST COMPRIS DANS AUCUN KIT</span>'
+                                    : HTML_STRONG_OPEN . htmlspecialchars($piece[$field]) . HTML_STRONG_CLOSE;
+                            } else {
+                                $value = isEmptyOrSpecialChar($piece[$field])
+                                    ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>'
+                                    : HTML_STRONG_OPEN . htmlspecialchars($piece[$field]) . HTML_STRONG_CLOSE;
+                            }
+                            
+                            $output .= sprintf(
+                                '<div class="product-info-row">
+                                    <span style="color:#2c5282">%s&nbsp;:&nbsp;</span>
+                                    <span>%s</span>
+                                </div>',
+                                $label,
+                                $value
+                            );
+                        }
+                    }
+
+                    $output .= '</div></div>';
+
+                    // Groupe des actions (quantité et bouton panier)
+                    $output .= '<div class="actions-group">';
+                    $output .= sprintf('
+                                    <div class="quantity-container" style="display:flex;align-items:center;gap:10px">
+                                        <label style="color:#2c5282">Quantité :</label>
+                                        <div style="display:flex;align-items:center">
+                                            <button onclick="this.nextElementSibling.stepDown()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:5px 9px;cursor:pointer">-</button>
+                                            <input type="number" value="1" min="1" style="width:50px;text-align:center;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;border-left:none;border-right:none;padding:7px 0">
+                                            <button onclick="this.previousElementSibling.stepUp()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:5px 9px;cursor:pointer">+</button>
+                                        </div>
+                                    </div>
+                                    <button onclick="ajouterAuPanier(\'%s\',%d)" class="add-to-cart-btn" style="color:white;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:8px; width: fit-content">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" style="stroke:currentColor;fill:none;stroke-width:2"><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
+                                        Ajouter au panier
+                                    </button>
+                                </div>
+                                <div id="alert-%d" style="display:none;margin-top:10px;padding:15px;border-radius:5px;background-color:#4CAF50;color:white;font-weight:bold;text-align:center">
+                                    <div style="display:flex;justify-content:space-between;align-items:center;gap:5px">
+                                        <span>✓ Produit ajouté au panier avec succès !</span>
+                                        <a href="%s" style="background-color:white;color:#4CAF50;padding:8px 15px;border-radius:4px;text-decoration:none;font-weight:bold;transition:all .3s">Voir le panier</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>',
+                    $sku,
+                    $variation_id,
+                    $variation_id,
+                    wc_get_cart_url()
+                    );
+                }
+                $output .= '</div>'; // fin de scroll-container
+
+                // Ajouter les contrôles de zoom desktop
+                $output .= '
+                <div class="zoom-controls desktop">
+                    <button class="zoom-button" onclick="resetZoom()">Reset</button>
+                    <button class="zoom-button" onclick="zoomIn()">-</button>
+                    <span id="zoomLevel" style="color: white; margin: 0 10px;">100%</span>
+                    <button class="zoom-button" onclick="zoomOut()">+</button>
+                </div>
+                ';
+            }
+
+            $output .= '<script>
+            function toggleAccordion(index, event) {
+                event.preventDefault();
+
+                const content = document.getElementById(`accordion-${index}`);
+                const allContents = document.getElementsByClassName("accordion-content");
+                const allHeaders = document.getElementsByClassName("accordion-header");
+                const currentHeader = event.currentTarget;
+
+                // Fermer tous les autres accordéons
+                for(let i = 0; i < allContents.length; i++) {
+                    const currentContent = allContents[i];
+                    if(currentContent.id !== `accordion-${index}`) {
+                        currentContent.style.display = "none";
+                        currentContent.classList.remove("active");
+                        allHeaders[i].querySelector(".arrow").innerHTML = "▼";
                     }
                 }
-                ?>
 
-                // Initialisation et observateurs
-                updatePointPositions();
-                initializePointColors();
-                
-                const resizeObserver = new ResizeObserver(() => {
-                    updatePointPositions();
-                });
-                resizeObserver.observe(zoomImage);
-
-                // Gestionnaire de clic pour debug
-                zoomContainer.addEventListener('click', function(e) {
-                    const rect = zoomContainer.getBoundingClientRect();
-                    const scale = calculateScale();
-                    const x = (e.clientX - rect.left) / scale.scaleX;
-                    const y = (e.clientY - rect.top) / scale.scaleY;
-                    
-                    console.log('Coordonnées du clic:', {
-                        screen: {x: e.clientX, y: e.clientY},
-                        relative: {x: e.clientX - rect.left, y: e.clientY - rect.top},
-                        scaled: {x, y},
-                        scale
-                    });
-                });
-
-                // Ajouter un écouteur pour la mise à jour des points lors du zoom
-                const originalUpdateTransform = window.updateTransform;
-                window.updateTransform = function() {
-                    if (originalUpdateTransform) originalUpdateTransform();
-                    requestAnimationFrame(updatePointPositions);
-                };
-
-                // Observer les changements de style de l'image
-                const observer = new MutationObserver(() => {
-                    requestAnimationFrame(updatePointPositions);
-                });
-
-                observer.observe(zoomImage, {
-                    attributes: true,
-                    attributeFilter: ['style']
-                });
-
-                // Mettre à jour lors du redimensionnement de la fenêtre
-                window.addEventListener('resize', () => {
-                    requestAnimationFrame(updatePointPositions);
-                });
-
-                // Écouter l'événement de zoom
-                window.addEventListener('zoomLevelChanged', (e) => {
-                    requestAnimationFrame(updatePointPositions);
-                });
+                // Ouvrir/fermer l\'accordéon cliqué
+                if(content.classList.contains("active")) {
+                    content.style.display = "none";
+                    content.classList.remove("active");
+                    currentHeader.querySelector(".arrow").innerHTML = "▼";
+                } else {
+                    content.style.display = "block";
+                    content.classList.add("active");
+                    currentHeader.querySelector(".arrow").innerHTML = "▲";
+                }
             }
-        });
 
-        // Gestion des boutons de quantité
-        jQuery(document).ready(function($) {
-            $(document).on('click', '.plus-btn', function() {
-                var input = $(this).siblings('.quantity-input');
-                input.val(parseInt(input.val()) + 1);
-            });
+            async function ajouterAuPanier(reference, productId) {
+                const btn = event.currentTarget;
+                const qty = btn.parentElement.querySelector("input[type=number]").value;
 
-            $(document).on('click', '.minus-btn', function() {
-                var input = $(this).siblings('.quantity-input');
-                var value = parseInt(input.val());
-                if (value > 1) {
-                    input.val(value - 1);
+                // Vérifier si le productId est égal à 0
+                if (productId === 0) {
+                    
+                    const errorAlert = document.createElement(\'div\');
+                    errorAlert.style.cssText = \'margin-top:10px;padding:15px;border-radius:5px;background-color:#FF0000;color:white;font-weight:bold;text-align:center\';
+                    errorAlert.innerHTML = `
+                        <div class="red-alert" style="display:flex;justify-content:space-between;align-items:center;gap:5px">
+                            <span>X Produit non trouvé dans la base de données</span>
+                            <a href="https://www.cenov-distribution.fr/nous-contacter/"
+                               style="background-color:white;color:#FF0000;padding:8px 15px;border-radius:4px;text-decoration:none;font-weight:bold;transition:all .3s">
+                               Nous contacter
+                            </a>
+                        </div>
+                    `;
+                    
+                    btn.parentElement.insertAdjacentElement(\'afterend\', errorAlert);
+                    
+                    return;
+                }
+
+                try {
+                    const formData = new FormData();
+                    formData.append("action", "woocommerce_ajax_add_to_cart");
+                    formData.append("product_id", productId);
+                    formData.append("quantity", qty);
+                    formData.append("add-to-cart", productId);
+
+                    let ajaxUrl = "/wp-admin/admin-ajax.php";
+                    if (typeof wc_add_to_cart_params !== "undefined") {
+                        ajaxUrl = wc_add_to_cart_params.wc_ajax_url.toString().replace("%%endpoint%%", "add_to_cart");
+                    }
+
+                    const response = await fetch(ajaxUrl, {
+                        method: "POST",
+                        body: formData,
+                        credentials: "same-origin"
+                    });
+
+                    // Si on a un ID produit valide, on considère que le produit est ajouté
+                    if (productId !== 0) {
+                        console.log("✅ SUCCÈS: Produit ajouté au panier!", {
+                            sku: reference,
+                            productId: productId
+                        });
+                        
+                        btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><path d=\'M20 6L9 17l-5-5\'/></svg>Ajouté !</div>";
+                        
+                        const alertElement = document.getElementById(`alert-${productId}`);
+                        if (alertElement) alertElement.style.display = "block";
+
+                        jQuery(document.body).trigger("wc_fragments_refreshed");
+                    }
+
+                } catch (error) {
+                    console.log("❌ ERREUR:", error.message);
+                }
+
+                setTimeout(() => {
+                    btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><path d=\'M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6\'/><circle cx=\'9\' cy=\'21\' r=\'1\'/><circle cx=\'20\' cy=\'21\' r=\'1\'/></svg>Ajouter au panier</div>";
+                }, 2000);
+            }
+
+            function toggleDropdown(header) {
+                const content = header.nextElementSibling;
+                const arrow = header.querySelector(".dropdown-arrow");
+                if (content.classList.contains("show")) {
+                    content.classList.remove("show");
+                    arrow.textContent = "▼";
+                } else {
+                    content.classList.add("show");
+                    arrow.textContent = "▲";
+                }
+            }
+
+            // Initialiser le premier accordéon comme ouvert au chargement de la page
+            document.addEventListener("DOMContentLoaded", function() {
+                const firstAccordion = document.querySelector(".accordion-content");
+                const firstHeader = document.querySelector(".accordion-header");
+                if(firstAccordion && firstHeader) {
+                    firstAccordion.style.display = "block";
+                    firstAccordion.classList.add("active");
+                    firstHeader.querySelector(".arrow").innerHTML = "▲";
                 }
             });
-        });
-        </script>
-        <?php
-        return ob_get_clean();
+            </script>';
+
+            return $output;
+
+        } catch (ProductNotFoundException $e) {
+            return '<div style="color:red">Erreur: ' . htmlspecialchars($e->getMessage()) . '</div>';
+        }
     }
 }
 
-add_shortcode('tooltip_ve', 'tooltipVeFunction');
-?>
+echo afficherCaracteristiquesProduitV2();
