@@ -11,7 +11,6 @@ if (!function_exists('accordionVeFunction')) {
                 position: relative;
             }
             .accordion-header {
-                background: #0056B3;
                 color: white;
                 padding: 15px 20px;
                 cursor: pointer;
@@ -19,6 +18,10 @@ if (!function_exists('accordionVeFunction')) {
                 justify-content: space-between;
                 align-items: center;
                 font-size: 18px;
+                background: #0056B3; /* Couleur par défaut */
+            }
+            .accordion-header.special {
+                background: #00458F; /* Couleur pour les pièces spéciales */
             }
             .accordion-content {
                 display: none;
@@ -97,6 +100,19 @@ if (!function_exists('accordionVeFunction')) {
 
             // Initialiser le premier accordéon comme ouvert
             document.addEventListener("DOMContentLoaded", function() {
+                // Initialiser les styles et l'affichage pour les pièces spéciales
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    const titleSpan = header.querySelector('span');
+                    if (titleSpan) {
+                        const text = titleSpan.textContent;
+                        const isSpecialPart = text.includes('Kit-');
+                        
+                        if (isSpecialPart) {
+                            header.classList.add('special');
+                        }
+                    }
+                });
+
                 const firstAccordion = document.querySelector(".accordion-content");
                 const firstHeader = document.querySelector(".accordion-header");
                 if(firstAccordion && firstHeader) {
