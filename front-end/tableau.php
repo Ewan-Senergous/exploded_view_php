@@ -49,22 +49,6 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                 }
                 .add-to-cart-btn{background:#FF5733;transition:background-color .3s}
                 .add-to-cart-btn:hover{background:#FF774D!important}
-                .accordion {
-                    margin-bottom: 15px;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    position: relative;
-                }
-                .accordion-header {
-                    background: #0056B3;
-                    color: white;
-                    padding: 15px 20px;
-                    cursor: pointer;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    font-size: 18px;
-                }
                 .position-text {
                     font-weight: 600;
                     font-size: 18px;
@@ -72,16 +56,6 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                 .product-name {
                     font-weight: 600;
                     font-size: 18px;
-                }
-                .accordion-content {
-                    display: none;
-                    padding: 25px;
-                    background: white;
-                    border: 1px solid #e2e8f0;
-                    font-size: 18px;
-                }
-                .accordion-content.active {
-                    display: block;
                 }
                 .scroll-container {
                     max-height: 600px;
@@ -161,26 +135,6 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                     .scroll-container {
                         max-height: 500px;
                     }
-                }
-                .details-dropdown {
-                    border: 1px solid #e2e8f0;
-                    border-radius: 5px;
-                }
-                .dropdown-header {
-                    background: #f8fafc;
-                    padding: 10px 15px;
-                    cursor: pointer;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    border-radius: 5px;
-                }
-                .dropdown-content {
-                    display: none;
-                    padding: 15px;
-                }
-                .dropdown-content.show {
-                    display: block;
                 }
             </style>';
 
@@ -329,36 +283,6 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
             }
 
             $output .= '<script>
-            function toggleAccordion(index, event) {
-                event.preventDefault();
-
-                const content = document.getElementById(`accordion-${index}`);
-                const allContents = document.getElementsByClassName("accordion-content");
-                const allHeaders = document.getElementsByClassName("accordion-header");
-                const currentHeader = event.currentTarget;
-
-                // Fermer tous les autres accordéons
-                for(let i = 0; i < allContents.length; i++) {
-                    const currentContent = allContents[i];
-                    if(currentContent.id !== `accordion-${index}`) {
-                        currentContent.style.display = "none";
-                        currentContent.classList.remove("active");
-                        allHeaders[i].querySelector(".arrow").innerHTML = "▼";
-                    }
-                }
-
-                // Ouvrir/fermer l\'accordéon cliqué
-                if(content.classList.contains("active")) {
-                    content.style.display = "none";
-                    content.classList.remove("active");
-                    currentHeader.querySelector(".arrow").innerHTML = "▼";
-                } else {
-                    content.style.display = "block";
-                    content.classList.add("active");
-                    currentHeader.querySelector(".arrow").innerHTML = "▲";
-                }
-            }
-
             async function ajouterAuPanier(reference, productId) {
                 const btn = event.currentTarget;
                 const qty = btn.parentElement.querySelector("input[type=number]").value;
@@ -424,29 +348,6 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                     btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><path d=\'M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6\'/><circle cx=\'9\' cy=\'21\' r=\'1\'/><circle cx=\'20\' cy=\'21\' r=\'1\'/></svg>Ajouter au panier</div>";
                 }, 2000);
             }
-
-            function toggleDropdown(header) {
-                const content = header.nextElementSibling;
-                const arrow = header.querySelector(".dropdown-arrow");
-                if (content.classList.contains("show")) {
-                    content.classList.remove("show");
-                    arrow.textContent = "▼";
-                } else {
-                    content.classList.add("show");
-                    arrow.textContent = "▲";
-                }
-            }
-
-            // Initialiser le premier accordéon comme ouvert au chargement de la page
-            document.addEventListener("DOMContentLoaded", function() {
-                const firstAccordion = document.querySelector(".accordion-content");
-                const firstHeader = document.querySelector(".accordion-header");
-                if(firstAccordion && firstHeader) {
-                    firstAccordion.style.display = "block";
-                    firstAccordion.classList.add("active");
-                    firstHeader.querySelector(".arrow").innerHTML = "▲";
-                }
-            });
             </script>';
 
             return $output;

@@ -47,6 +47,7 @@ if (!function_exists('addVueEclateeTab')) {
         echo do_shortcode('[zoom_ve]');
         echo do_shortcode('[tooltip_ve]');
         echo do_shortcode('[clickShowProducts]');
+        echo do_shortcode('[accordion_ve]');
         echo '<div class="zoom-container">';
         echo HTML_DIV_CLOSE;
         echo HTML_DIV_CLOSE;
