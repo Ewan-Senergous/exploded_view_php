@@ -12,8 +12,8 @@ if (!function_exists('clickShowProductsFunction')) {
                     // Vérifier si le point est invalide avant de réinitialiser sa couleur
                     const exists = point.getAttribute('data-exists') === 'true';
                     if (exists) {
-                        point.style.backgroundColor = 'rgba(75, 181, 67, 0.3)';
-                        point.style.borderColor = 'rgba(34, 139, 34, 0.5)';
+                        point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+                        point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
                     } else {
                         // Maintenir la couleur rouge pour les points invalides
                         point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
