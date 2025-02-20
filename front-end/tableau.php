@@ -15,11 +15,10 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
         return ($id = wc_get_product_id_by_sku($sku)) ? $id : 0;
     }
 
-    // Nouvelle fonction pour valider la position
+    // Modifier la fonction isValidPosition pour accepter les positions avec *
     function isValidPosition($position) {
-        // Convertir en entier et vérifier si c'est un nombre entre 1 et 1000
-        $pos = intval($position);
-        return $pos >= 1 && $pos <= 1000;
+        $position = ltrim($position, '*');
+        return is_numeric($position) && intval($position) >= 1 && intval($position) <= 10000;
     }
 
     // Modifier la fonction pour ne vérifier que si le champ est vide
@@ -142,37 +141,57 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
             if (isset($jsonData['table_data'])) {
                 $output .= '<div id="scroll-container" class="scroll-container">';
                 
-                // Filtrer et trier les données
+                // Filtrer les données pour n'avoir que les positions valides
                 $filtered_data = array_filter($jsonData['table_data'], function($piece) {
-                    return isset($piece['position_vue_eclatee']) &&
-                           isValidPosition($piece['position_vue_eclatee']);
+                    return isset($piece['position_vue_eclatee']) && isValidPosition($piece['position_vue_eclatee']);
                 });
 
-                // Trier par position
-                usort($filtered_data, function($a, $b) {
+                // Séparer les pièces spéciales (*) des pièces normales
+                $special_parts = array_filter($filtered_data, function($piece) {
+                    return strpos($piece['position_vue_eclatee'], '*') === 0;
+                });
+                
+                $normal_parts = array_filter($filtered_data, function($piece) {
+                    return strpos($piece['position_vue_eclatee'], '*') !== 0;
+                });
+
+                // Trier chaque groupe séparément
+                usort($special_parts, function($a, $b) {
+                    return intval(ltrim($a['position_vue_eclatee'], '*')) - intval(ltrim($b['position_vue_eclatee'], '*'));
+                });
+
+                usort($normal_parts, function($a, $b) {
                     return intval($a['position_vue_eclatee']) - intval($b['position_vue_eclatee']);
                 });
+
+                // Fusionner les tableaux avec les pièces spéciales en premier
+                $filtered_data = array_merge($special_parts, $normal_parts);
 
                 foreach ($filtered_data as $index => $piece) {
                     $sku = htmlspecialchars($piece['reference_piece']);
                     $nom_piece = htmlspecialchars($piece['nom_piece']);
                     $variation_id = getProductVariationIdBySku($sku);
-                    $position = intval($piece['position_vue_eclatee']);
+                    $position = $piece['position_vue_eclatee'];
+                    $isSpecialPart = strpos($position, '*') === 0;
+                    
+                    // Pour l'affichage, on retire le * si présent
+                    $displayPosition = ltrim($position, '*');
 
                     $output .= sprintf('
                     <div class="accordion">
-                        <div class="accordion-header" onclick="toggleAccordion(%d, event)">
-                            <span>Position %d - <span class="product-name">%s</span></span>
+                        <div class="accordion-header %s" onclick="toggleAccordion(%d, event)">
+                            <span>Position %s - <span class="product-name">%s</span></span>
                             <span class="arrow">▼</span>
                         </div>
                         <div id="accordion-%d" class="accordion-content %s">
                             <div class="product-content-container">',
-                    $index,
-                    $position,
-                    HTML_STRONG_OPEN . $nom_piece . HTML_STRONG_CLOSE,
-                    $index,
-                    $index === 0 ? 'active' : ''
-                );
+                        $isSpecialPart ? 'special' : 'normal',
+                        $index,
+                        $displayPosition,
+                        HTML_STRONG_OPEN . $nom_piece . HTML_STRONG_CLOSE,
+                        $index,
+                        $index === 0 ? 'active' : ''
+                    );
 
                     // Remplacer la section qui affiche la référence pièce par la quantité
                     $output .= implode('', array_map(function($k, $v) {
@@ -204,7 +223,10 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                         <div class="dropdown-content">';
 
                     // Définir l'ordre spécifique des champs
-                    $orderedFields = ['nom_model', 'reference_model', 'reference_piece', 'contenu_dans_kit'];
+                    $orderedFields = $isSpecialPart ?
+                        ['nom_model', 'reference_model', 'reference_piece'] :
+                        ['nom_model', 'reference_model', 'reference_piece', 'contenu_dans_kit'];
+
                     foreach ($orderedFields as $field) {
                         if (isset($piece[$field])) {
                             $label = [
