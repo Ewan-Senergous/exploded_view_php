@@ -79,19 +79,23 @@ if (!function_exists('clickShowProductsFunction')) {
                 });
             }
 
-            // Gestionnaire d'événements modifié
+            // Modifié pour garder la sélection lors du clic sur l'accordéon
             const handleInteraction = (e) => {
-                // Ne pas empêcher le comportement par défaut pour les clicks sur l'accordéon
-                if (!e.currentTarget.classList.contains('piece-hover')) {
-                    return;
+                const target = e.currentTarget;
+                let position;
+
+                if (target.classList.contains('piece-hover')) {
+                    e.preventDefault();
+                    position = target.getAttribute('data-position');
+                } else if (target.classList.contains('accordion-header')) {
+                    position = parseInt(target.querySelector('span').textContent.match(/Position (\d+)/)[1]);
                 }
-                e.preventDefault();
-                const position = e.currentTarget.getAttribute('data-position');
+
                 if (position) openAccordionForPosition(parseInt(position));
             };
 
-            // Application des écouteurs uniquement sur les points
-            document.querySelectorAll('.piece-hover').forEach(element => {
+            // Application des écouteurs sur les points ET les accordéons
+            document.querySelectorAll('.piece-hover, .accordion-header').forEach(element => {
                 ['click', 'touchstart'].forEach(eventType => {
                     element.addEventListener(eventType, handleInteraction, { passive: false });
                 });
