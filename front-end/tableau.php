@@ -46,6 +46,13 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                     font-family: "Poppins", sans-serif;
                     font-size: 18px;
                 }
+                .position-word {
+                    display: inline;
+                }
+                .special .position-word,
+                .special .position-number {
+                    display: none;
+                }
                 .add-to-cart-btn{background:#FF5733;transition:background-color .3s}
                 .add-to-cart-btn:hover{background:#FF774D!important}
                 .position-text {
@@ -184,7 +191,7 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                     $output .= sprintf('
                     <div class="accordion">
                         <div class="accordion-header %s" onclick="toggleAccordion(%d, event)">
-                             <span><strong>Position %s - %s</strong><span class="product-name">%s</span></span>
+                             <span><strong><span class="position-word">Position </span><span class="position-number">%s - </span>%s</strong><span class="product-name">%s</span></span>
                             <span class="arrow">▼</span>
                         </div>
                         <div id="accordion-%d" class="accordion-content %s">
