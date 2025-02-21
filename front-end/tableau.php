@@ -41,8 +41,8 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                 * { font-family: "Poppins", sans-serif; font-size: 18px; }
                 .position-word, .position-number { display: inline; }
                 .special .position-word, .special .position-number { display: none; }
-                .add-to-cart-btn { background: #FF5733; transition: background-color .3s; }
-                .add-to-cart-btn:hover { background: #FF774D !important; }
+                .add-to-cart-btn { background: #EE0701; transition: background-color .3s; }
+                .add-to-cart-btn:hover { background:#FF2D27 !important; }
                 .position-text, .product-name { font-weight: 600; font-size: 18px; }
                 .scroll-container { max-height: 600px; overflow-y: auto; }
                 .zoom-controls.desktop { display: block; }
@@ -109,7 +109,7 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
 
                     $kitNumber = '';
                     if ($isSpecialPart) {
-                        $kitNumber = 'Kit ' . (array_search($piece, $special_parts) + 1) . ' - ';
+                        $kitNumber = 'Maintenance - ';  // Suppression de la numérotation
                     }
                     
                     $output .= sprintf('
@@ -171,7 +171,7 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                             
                             if ($field === 'contenu_dans_kit') {
                                 $value = isEmptyOrSpecialChar($piece[$field])
-                                    ? '<span style="color: red; font-weight: bold;">N\'EST COMPRIS DANS AUCUN KIT</span>'
+                                    ? '<span style="font-weight: bold;">n\'est compris dans aucun kit.</span>'
                                     : HTML_STRONG_OPEN . htmlspecialchars($piece[$field]) . HTML_STRONG_CLOSE;
                             } else {
                                 $value = isEmptyOrSpecialChar($piece[$field])
