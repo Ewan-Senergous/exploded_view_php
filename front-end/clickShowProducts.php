@@ -19,6 +19,7 @@ if (!function_exists('clickShowProductsFunction')) {
 
             function resetAllPoints() {
                 document.querySelectorAll('.piece-hover').forEach(point => {
+                    
                     const exists = point.getAttribute('data-exists') === 'true';
                     point.style.backgroundColor = COLORS.default.bg;
                     point.style.borderColor = COLORS.default.border;
@@ -26,11 +27,17 @@ if (!function_exists('clickShowProductsFunction')) {
                 });
             }
 
+           
             function findAccordionByPosition(position) {
                 const headers = document.querySelectorAll('.accordion-header');
                 for (let header of headers) {
-                    const pos = parseInt(header.querySelector('span').textContent.match(/Position (\d+)/)[1]);
-                    if (pos === parseInt(position)) {
+                    const posText = header.querySelector('span').textContent;
+                    // Ignorer si c'est un kit
+                    if (posText.includes('Maintenance')) {
+                        continue;
+                    }
+                    const matches = posText.match(/Position (\d+)/);
+                    if (matches && parseInt(matches[1]) === parseInt(position)) {
                         return {
                             header: header,
                             content: header.nextElementSibling
@@ -40,12 +47,12 @@ if (!function_exists('clickShowProductsFunction')) {
                 return null;
             }
 
-            function openAccordionForPosition(position) {
+            function openAccordionForPosition(position, fromAccordion = false) {
                 const accordion = findAccordionByPosition(position);
                 if (!accordion) return;
-                
+
                 resetAllPoints();
-                
+
                 // Mise à jour des points
                 document.querySelectorAll('.piece-hover').forEach(point => {
                     const isCurrentPosition = point.getAttribute('data-position') === position.toString();
@@ -53,20 +60,27 @@ if (!function_exists('clickShowProductsFunction')) {
                         (point.getAttribute('data-exists') === 'true' ? 'normal' : 'invalid'));
                 });
 
-                // Fermer tous les accordéons et ouvrir celui sélectionné
-                document.querySelectorAll('.accordion-content').forEach(content => {
-                    const isTarget = content === accordion.content;
-                    content.style.display = isTarget ? 'block' : 'none';
-                    content.classList.toggle('active', isTarget);
-                    content.previousElementSibling.querySelector('.arrow').innerHTML = isTarget ? '▲' : '▼';
-                });
+                // Ne pas modifier l'accordéon si le clic vient de l'accordéon lui-même
+                if (!fromAccordion) {
+                    // Fermer tous les accordéons d'abord
+                    document.querySelectorAll('.accordion-content').forEach(content => {
+                        content.style.display = 'none';
+                        content.classList.remove('active');
+                        content.previousElementSibling.querySelector('.arrow').innerHTML = '▼';
+                    });
 
-                // Scroll vers l'accordéon
-                const scrollContainer = document.querySelector('.scroll-container');
-                if (scrollContainer) {
-                    const containerTop = scrollContainer.getBoundingClientRect().top;
-                    const accordionTop = accordion.header.getBoundingClientRect().top;
-                    scrollContainer.scrollTop += (accordionTop - containerTop);
+                    // Ouvrir l'accordéon sélectionné
+                    accordion.content.style.display = 'block';
+                    accordion.content.classList.add('active');
+                    accordion.header.querySelector('.arrow').innerHTML = '▲';
+
+                    // Scroll vers l'accordéon
+                    const scrollContainer = document.querySelector('.scroll-container');
+                    if (scrollContainer) {
+                        const containerTop = scrollContainer.getBoundingClientRect().top;
+                        const accordionTop = accordion.header.getBoundingClientRect().top;
+                        scrollContainer.scrollTop += (accordionTop - containerTop);
+                    }
                 }
 
                 // Mise à jour du point sélectionné
@@ -78,34 +92,37 @@ if (!function_exists('clickShowProductsFunction')) {
                     }
                 });
             }
-
-            // Modifié pour garder la sélection lors du clic sur l'accordéon
-            const handleInteraction = (e) => {
-                const target = e.currentTarget;
-                let position;
-
-                if (target.classList.contains('piece-hover')) {
-                    e.preventDefault();
-                    position = target.getAttribute('data-position');
-                } else if (target.classList.contains('accordion-header')) {
-                    position = parseInt(target.querySelector('span').textContent.match(/Position (\d+)/)[1]);
-                }
-
-                if (position) openAccordionForPosition(parseInt(position));
-            };
-
-            // Application des écouteurs sur les points ET les accordéons
-            document.querySelectorAll('.piece-hover, .accordion-header').forEach(element => {
+                
+            // Gestionnaire d'événements séparés pour les points et les accordéons
+            document.querySelectorAll('.piece-hover').forEach(point => {
                 ['click', 'touchstart'].forEach(eventType => {
-                    element.addEventListener(eventType, handleInteraction, { passive: false });
+                    point.addEventListener(eventType, (e) => {
+                        e.preventDefault();
+                        const position = point.getAttribute('data-position');
+                        if (position) openAccordionForPosition(parseInt(position), false);
+                    }, { passive: false });
+                });
+            });
+
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                ['click', 'touchstart'].forEach(eventType => {
+                    header.addEventListener(eventType, (e) => {
+                        const posText = header.querySelector('span').textContent;
+                        if (posText.includes('Maintenance')) return;
+                        
+                        const matches = posText.match(/Position (\d+)/);
+                        if (matches) {
+                            const position = parseInt(matches[1]);
+                            openAccordionForPosition(position, true);
+                        }
+                    }, { passive: false });
                 });
             });
         });
         </script>
-        <?php
+         <?php
         return ob_get_clean();
     }
 }
 
 add_shortcode('clickShowProducts', 'clickShowProductsFunction');
-?>
