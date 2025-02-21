@@ -49,7 +49,7 @@ if (!function_exists('clickShowProductsFunction')) {
                 // Mise à jour des points
                 document.querySelectorAll('.piece-hover').forEach(point => {
                     const isCurrentPosition = point.getAttribute('data-position') === position.toString();
-                    point.setAttribute('data-state', isCurrentPosition ? 'selected' : 
+                    point.setAttribute('data-state', isCurrentPosition ? 'selected' :
                         (point.getAttribute('data-exists') === 'true' ? 'normal' : 'invalid'));
                 });
 
@@ -82,7 +82,7 @@ if (!function_exists('clickShowProductsFunction')) {
             // Gestionnaire d'événements unifié pour click et touch
             const handleInteraction = (e) => {
                 e.preventDefault();
-                const position = e.currentTarget.getAttribute('data-position') || 
+                const position = e.currentTarget.getAttribute('data-position') ||
                     parseInt(e.currentTarget.querySelector('span').textContent.match(/Position (\d+)/)[1]);
                 if (position) openAccordionForPosition(parseInt(position));
             };

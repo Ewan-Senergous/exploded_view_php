@@ -68,7 +68,6 @@ if (!function_exists('tooltipVeFunction')) {
         $svg_positions = $svg_data['positions'];
         $svgWidth = $svg_data['width'];
         $svgHeight = $svg_data['height'];
-        echo "<script>console.log('Positions SVG chargées:', " . json_encode($svg_positions) . ");</script>";
 
         ?>
         <style>
