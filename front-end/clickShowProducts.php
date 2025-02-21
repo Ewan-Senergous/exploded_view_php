@@ -79,16 +79,19 @@ if (!function_exists('clickShowProductsFunction')) {
                 });
             }
 
-            // Gestionnaire d'événements unifié pour click et touch
+            // Gestionnaire d'événements modifié
             const handleInteraction = (e) => {
+                // Ne pas empêcher le comportement par défaut pour les clicks sur l'accordéon
+                if (!e.currentTarget.classList.contains('piece-hover')) {
+                    return;
+                }
                 e.preventDefault();
-                const position = e.currentTarget.getAttribute('data-position') ||
-                    parseInt(e.currentTarget.querySelector('span').textContent.match(/Position (\d+)/)[1]);
+                const position = e.currentTarget.getAttribute('data-position');
                 if (position) openAccordionForPosition(parseInt(position));
             };
 
-            // Application des écouteurs d'événements
-            document.querySelectorAll('.piece-hover, .accordion-header').forEach(element => {
+            // Application des écouteurs uniquement sur les points
+            document.querySelectorAll('.piece-hover').forEach(element => {
                 ['click', 'touchstart'].forEach(eventType => {
                     element.addEventListener(eventType, handleInteraction, { passive: false });
                 });

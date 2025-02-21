@@ -198,7 +198,7 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                                         <label style="color:#2c5282">Quantité :</label>
                                         <div style="display:flex;align-items:center">
                                             <button onclick="this.nextElementSibling.stepDown()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:5px 9px;cursor:pointer">-</button>
-                                            <input type="number" value="1" min="1" style="width:50px;text-align:center;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;border-left:none;border-right:none;padding:7px 0">
+                                            <input type="number" value="1" min="1" aria-label="Quantité" title="Quantité" style="width:50px;text-align:center;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;border-left:none;border-right:none;padding:7px 0">
                                             <button onclick="this.previousElementSibling.stepUp()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:5px 9px;cursor:pointer">+</button>
                                         </div>
                                     </div>
