@@ -5,30 +5,31 @@ if (!function_exists('clickShowProductsFunction')) {
         ?>
         <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Fonction pour réinitialiser tous les points
-            // Change couleur rouge en aqua
+            // Constantes de couleurs pour éviter la répétition
+            const COLORS = {
+                default: {
+                    bg: 'rgba(255, 0, 0, 0.3)',
+                    border: 'rgba(255, 0, 0, 0.5)'
+                },
+                selected: {
+                    bg: 'rgba(0, 86, 179, 0.3)',
+                    border: 'rgba(0, 86, 179, 0.5)'
+                }
+            };
+
             function resetAllPoints() {
                 document.querySelectorAll('.piece-hover').forEach(point => {
-                    // Vérifier si le point est invalide avant de réinitialiser sa couleur
                     const exists = point.getAttribute('data-exists') === 'true';
-                    if (exists) {
-                        point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                        point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
-                    } else {
-                        // Maintenir la couleur rouge pour les points invalides
-                        point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                        point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
-                    }
+                    point.style.backgroundColor = COLORS.default.bg;
+                    point.style.borderColor = COLORS.default.border;
                     point.setAttribute('data-selected', 'false');
                 });
             }
 
-            // Fonction pour trouver l'accordéon par position
             function findAccordionByPosition(position) {
                 const headers = document.querySelectorAll('.accordion-header');
                 for (let header of headers) {
-                    const posText = header.querySelector('span').textContent;
-                    const pos = parseInt(posText.match(/Position (\d+)/)[1]);
+                    const pos = parseInt(header.querySelector('span').textContent.match(/Position (\d+)/)[1]);
                     if (pos === parseInt(position)) {
                         return {
                             header: header,
@@ -39,90 +40,58 @@ if (!function_exists('clickShowProductsFunction')) {
                 return null;
             }
 
-            // Fonction modifiée pour ouvrir l'accordéon correspondant à la position
             function openAccordionForPosition(position) {
                 const accordion = findAccordionByPosition(position);
+                if (!accordion) return;
                 
                 resetAllPoints();
                 
+                // Mise à jour des points
                 document.querySelectorAll('.piece-hover').forEach(point => {
-                    if (point.getAttribute('data-position') === position.toString()) {
-                        // Mettre à jour uniquement l'état sans modifier directement les couleurs
-                        point.setAttribute('data-state', 'selected');
-                    } else {
-                        point.setAttribute('data-state', point.getAttribute('data-exists') === 'true' ? 'normal' : 'invalid');
-                    }
+                    const isCurrentPosition = point.getAttribute('data-position') === position.toString();
+                    point.setAttribute('data-state', isCurrentPosition ? 'selected' : 
+                        (point.getAttribute('data-exists') === 'true' ? 'normal' : 'invalid'));
                 });
 
-                if (accordion) {
-                    // Fermer tous les accordéons d'abord
-                    document.querySelectorAll('.accordion-content').forEach(content => {
-                        content.style.display = 'none';
-                        content.classList.remove('active');
-                        content.previousElementSibling.querySelector('.arrow').innerHTML = '▼';
-                    });
+                // Fermer tous les accordéons et ouvrir celui sélectionné
+                document.querySelectorAll('.accordion-content').forEach(content => {
+                    const isTarget = content === accordion.content;
+                    content.style.display = isTarget ? 'block' : 'none';
+                    content.classList.toggle('active', isTarget);
+                    content.previousElementSibling.querySelector('.arrow').innerHTML = isTarget ? '▲' : '▼';
+                });
 
-                    // Ouvrir l'accordéon sélectionné
-                    accordion.content.style.display = 'block';
-                    accordion.content.classList.add('active');
-                    accordion.header.querySelector('.arrow').innerHTML = '▲';
-
-                    // Faire défiler jusqu'à l'accordéon en le positionnant en haut
-                    const scrollContainer = document.querySelector('.scroll-container');
-                    if (scrollContainer) {
-                        const containerTop = scrollContainer.getBoundingClientRect().top;
-                        const accordionTop = accordion.header.getBoundingClientRect().top;
-                        scrollContainer.scrollTop += (accordionTop - containerTop);
-                    }
-
-                    // Changer la couleur du point correspondant
-                    document.querySelectorAll(`.piece-hover[data-position="${position}"]`).forEach(point => {
-                        if (point.getAttribute('data-exists') === 'true') {
-                            point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
-                            point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
-                            point.setAttribute('data-selected', 'true');
-                        }
-                    });
+                // Scroll vers l'accordéon
+                const scrollContainer = document.querySelector('.scroll-container');
+                if (scrollContainer) {
+                    const containerTop = scrollContainer.getBoundingClientRect().top;
+                    const accordionTop = accordion.header.getBoundingClientRect().top;
+                    scrollContainer.scrollTop += (accordionTop - containerTop);
                 }
+
+                // Mise à jour du point sélectionné
+                document.querySelectorAll(`.piece-hover[data-position="${position}"]`).forEach(point => {
+                    if (point.getAttribute('data-exists') === 'true') {
+                        point.style.backgroundColor = COLORS.selected.bg;
+                        point.style.borderColor = COLORS.selected.border;
+                        point.setAttribute('data-selected', 'true');
+                    }
+                });
             }
 
-            // Ajouter l'écouteur de clic sur les points rouges
-            document.querySelectorAll('.piece-hover').forEach(point => {
-                // Gestionnaire pour clic souris
-                point.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const position = this.getAttribute('data-position');
-                    if (position) {
-                        openAccordionForPosition(parseInt(position));
-                    }
+            // Gestionnaire d'événements unifié pour click et touch
+            const handleInteraction = (e) => {
+                e.preventDefault();
+                const position = e.currentTarget.getAttribute('data-position') || 
+                    parseInt(e.currentTarget.querySelector('span').textContent.match(/Position (\d+)/)[1]);
+                if (position) openAccordionForPosition(parseInt(position));
+            };
+
+            // Application des écouteurs d'événements
+            document.querySelectorAll('.piece-hover, .accordion-header').forEach(element => {
+                ['click', 'touchstart'].forEach(eventType => {
+                    element.addEventListener(eventType, handleInteraction, { passive: false });
                 });
-
-                // Ajouter gestionnaire pour événements tactiles
-                point.addEventListener('touchstart', function(e) {
-                    e.preventDefault();
-                    const position = this.getAttribute('data-position');
-                    if (position) {
-                        openAccordionForPosition(parseInt(position));
-                    }
-                }, { passive: false });
-            });
-
-            // Modifier l'écouteur de clic sur les en-têtes d'accordéon
-            document.querySelectorAll('.accordion-header').forEach(header => {
-                const clickHandler = function(e) {
-                    const posText = this.querySelector('span').textContent;
-                    const position = parseInt(posText.match(/Position (\d+)/)[1]);
-                    
-                    resetAllPoints();
-                    document.querySelectorAll(`.piece-hover[data-position="${position}"]`).forEach(point => {
-                        point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
-                        point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
-                        point.setAttribute('data-selected', 'true');
-                    });
-                };
-
-                header.addEventListener('click', clickHandler);
-                header.addEventListener('touchstart', clickHandler, { passive: false });
             });
         });
         </script>
