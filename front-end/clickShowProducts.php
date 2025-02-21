@@ -28,13 +28,8 @@ if (!function_exists('clickShowProductsFunction')) {
                 const headers = document.querySelectorAll('.accordion-header');
                 for (let header of headers) {
                     const posText = header.querySelector('span').textContent;
-                    // Ignorer si c'est un kit
-                    if (posText.includes('Kit')) {
-                        continue;
-                    }
-                    // Chercher la position uniquement pour les non-kits
-                    const matches = posText.match(/Position (\d+)/);
-                    if (matches && parseInt(matches[1]) === parseInt(position)) {
+                    const pos = parseInt(posText.match(/Position (\d+)/)[1]);
+                    if (pos === parseInt(position)) {
                         return {
                             header: header,
                             content: header.nextElementSibling
@@ -116,21 +111,14 @@ if (!function_exists('clickShowProductsFunction')) {
             document.querySelectorAll('.accordion-header').forEach(header => {
                 const clickHandler = function(e) {
                     const posText = this.querySelector('span').textContent;
-                    // Ne rien faire si c'est un kit
-                    if (posText.includes('Kit')) {
-                        return;
-                    }
-                    // Chercher la position uniquement pour les non-kits
-                    const matches = posText.match(/Position (\d+)/);
-                    if (matches) {
-                        const position = parseInt(matches[1]);
-                        resetAllPoints();
-                        document.querySelectorAll(`.piece-hover[data-position="${position}"]`).forEach(point => {
-                            point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
-                            point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
-                            point.setAttribute('data-selected', 'true');
-                        });
-                    }
+                    const position = parseInt(posText.match(/Position (\d+)/)[1]);
+                    
+                    resetAllPoints();
+                    document.querySelectorAll(`.piece-hover[data-position="${position}"]`).forEach(point => {
+                        point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
+                        point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
+                        point.setAttribute('data-selected', 'true');
+                    });
                 };
 
                 header.addEventListener('click', clickHandler);

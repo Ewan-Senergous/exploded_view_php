@@ -167,8 +167,6 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                 // Fusionner les tableaux avec les pièces spéciales en premier
                 $filtered_data = array_merge($special_parts, $normal_parts);
 
-// ...existing code...
-
                 foreach ($filtered_data as $index => $piece) {
                     $sku = htmlspecialchars($piece['reference_piece']);
                     $nom_piece = htmlspecialchars($piece['nom_piece']);
@@ -177,32 +175,28 @@ if (!function_exists('afficherCaracteristiquesProduitV2')) {
                     $isSpecialPart = strpos($position, '*') === 0;
                     $displayPosition = ltrim($position, '*');
 
-                    // Gestion séparée du texte de position/kit
-                    static $kitCounter = 1;
-                    $positionText = sprintf(
-                        '%s',
-                        $isSpecialPart ? 
-                            HTML_STRONG_OPEN . "Kit " . $kitCounter++ . HTML_STRONG_CLOSE :
-                            HTML_STRONG_OPEN . "Position " . $displayPosition . HTML_STRONG_CLOSE
-                    );
-
+                    // Déterminer le numéro de kit pour les pièces spéciales
+                    $kitNumber = '';
+                    if ($isSpecialPart) {
+                        $kitNumber = 'Kit ' . (array_search($piece, $special_parts) + 1) . ' - ';
+                    }
+                    
                     $output .= sprintf('
                     <div class="accordion">
                         <div class="accordion-header %s" onclick="toggleAccordion(%d, event)">
-                            <span>%s - <span class="product-name">%s</span></span>
+                             <span><strong>Position %s - %s</strong><span class="product-name">%s</span></span>
                             <span class="arrow">▼</span>
                         </div>
                         <div id="accordion-%d" class="accordion-content %s">
                             <div class="product-content-container">',
                         $isSpecialPart ? 'special' : 'normal',
                         $index,
-                        $positionText,  // Utilisation du texte formaté séparément
+                        $displayPosition,
+                        $kitNumber,
                         HTML_STRONG_OPEN . $nom_piece . HTML_STRONG_CLOSE,
                         $index,
                         $index === 0 ? 'active' : ''
                     );
-
-// ...existing code...
 
                     // Remplacer la section qui affiche la référence pièce par la quantité
                     $output .= implode('', array_map(function($k, $v) {

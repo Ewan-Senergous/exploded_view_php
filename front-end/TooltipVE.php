@@ -240,12 +240,8 @@ if (!function_exists('tooltipVeFunction')) {
                 const headers = document.querySelectorAll('.accordion-header');
                 for (let header of headers) {
                     const posText = header.querySelector('span').textContent;
-                    // Ignorer les kits
-                    if (posText.includes('Kit')) {
-                        continue;
-                    }
-                    const matches = posText.match(/Position (\d+)/);
-                    if (matches && parseInt(matches[1]) === parseInt(position)) {
+                    const pos = parseInt(posText.match(/Position (\d+)/)[1]);
+                    if (pos === parseInt(position)) {
                         return true;
                     }
                 }
