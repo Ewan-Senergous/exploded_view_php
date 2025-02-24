@@ -1,5 +1,29 @@
 <?php
 if (!function_exists('finalVeFunction')) {
+    // Constantes HTML
+    define('HTML_STRONG_OPEN', '<strong>');
+    define('HTML_STRONG_CLOSE', '</strong>');
+
+    // Exception personnalisée pour la gestion des erreurs
+    class ProductNotFoundException extends Exception {
+        public function __construct($message = "Produit non trouvé", $code = 0, Exception $previous = null) {
+            parent::__construct($message, $code, $previous);
+        }
+    }
+
+    // Fonctions utilitaires du tableau
+    function getProductVariationIdBySku($sku) {
+        return ($id = wc_get_product_id_by_sku($sku)) ? $id : 0;
+    }
+
+    function isValidPosition($position) {
+        $position = ltrim($position, '*');
+        return is_numeric($position) && intval($position) >= 1 && intval($position) <= 10000;
+    }
+
+    function isEmptyOrSpecialChar($value) {
+        return empty(trim($value)) || trim($value) === ' ';
+    }
 
     function getSvgPositions($svg_url) {
         // Vérifie si l'URL est valide
@@ -44,6 +68,7 @@ if (!function_exists('finalVeFunction')) {
         return ['positions' => $positions, 'width' => $svgWidth, 'height' => $svgHeight];
     }
 
+
     function finalVeFunction() {
         ob_start();
         
@@ -59,6 +84,7 @@ if (!function_exists('finalVeFunction')) {
             }
         }
 
+        $jsonData = json_decode(preg_replace('/\s+/', ' ', $cross_ref), true);
        
         // Décoder le JSON et récupérer l'URL du SVG
         $data = json_decode(preg_replace('/\s+/', ' ', $cross_ref), true);
@@ -73,6 +99,7 @@ if (!function_exists('finalVeFunction')) {
             return 'SVG URL not found';
         }
         ?>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
         <style>
             .zoom-container {
                 position: relative;
@@ -151,7 +178,172 @@ if (!function_exists('finalVeFunction')) {
             background-color: rgba(255, 0, 0, 0.3);
             border-color: rgba(255, 0, 0, 0.5);
         }
+
+            /* Styles du tableau */
+            * { font-family: "Poppins", sans-serif; font-size: 18px; }
+            .position-word, .position-number { display: inline; }
+            .special .position-word, .special .position-number { display: none; }
+            .add-to-cart-btn { background: #EE0701; transition: background-color .3s; }
+            .add-to-cart-btn:hover { background:#FF2D27 !important; }
+            .position-text, .product-name { font-weight: 600; font-size: 18px; }
+            .scroll-container { max-height: 600px; overflow-y: auto; }
+            .zoom-controls.desktop { display: block; }
+            @media (max-width: 768px) {
+                .zoom-controls.desktop { display: none !important; }
+                .scroll-container { max-height: 400px !important; }
+                .red-alert { flex-direction: column-reverse; }
+            }
+            .product-info-row { display: flex; margin: 0; }
+            .details-dropdown { margin: 0; }
+            .actions-group { display: flex; flex-direction: column; gap: 20px; }
+            @media (min-width: 1900px) {
+                .product-content-container { gap: 25px; }
+                .actions-group { flex-direction: row; gap: 10px; }
+            }
+            .product-content-container { display: flex; flex-direction: column; gap: 20px; }
+            .accordion-content > div { display: flex; flex-direction: column; gap: 20px; }
+            @media (min-width: 1900px) {
+                .product-info-row { flex-wrap: wrap; }
+                .product-info-row span { word-break: break-word; }
+            }
+            @media (max-width: 1900px) {
+                .product-info-row { flex-direction: column; }
+                .product-info-row.quantity-row { flex-direction: row; }
+                .product-info-row span { min-width: 100%; }
+                .product-info-row.quantity-row span { min-width: unset; }
+                .actions-container { flex-direction: column; align-items: stretch; gap: 15px; }
+                .scroll-container { max-height: 500px; }
+            }
         </style>
+
+        <?php if (isset($jsonData['table_data'])) : ?>
+            <div id="scroll-container" class="scroll-container">
+                <?php
+                $filtered_data = array_filter($jsonData['table_data'], function($piece) {
+                    return isset($piece['position_vue_eclatee']) && isValidPosition($piece['position_vue_eclatee']);
+                });
+
+                $special_parts = array_filter($filtered_data, function($piece) {
+                    return strpos($piece['position_vue_eclatee'], '*') === 0;
+                });
+                
+                $normal_parts = array_filter($filtered_data, function($piece) {
+                    return strpos($piece['position_vue_eclatee'], '*') !== 0;
+                });
+
+                usort($special_parts, function($a, $b) {
+                    return intval(ltrim($a['position_vue_eclatee'], '*')) - intval(ltrim($b['position_vue_eclatee'], '*'));
+                });
+
+                usort($normal_parts, function($a, $b) {
+                    return intval($a['position_vue_eclatee']) - intval($b['position_vue_eclatee']);
+                });
+
+                $filtered_data = array_merge($special_parts, $normal_parts);
+
+                foreach ($filtered_data as $index => $piece) :
+                    $sku = htmlspecialchars($piece['reference_piece']);
+                    $nom_piece = htmlspecialchars($piece['nom_piece']);
+                    $variation_id = getProductVariationIdBySku($sku);
+                    $position = $piece['position_vue_eclatee'];
+                    $isSpecialPart = strpos($position, '*') === 0;
+                    $displayPosition = ltrim($position, '*');
+
+                    $kitNumber = '';
+                    if ($isSpecialPart) {
+                        $kitNumber = 'Maintenance - ';
+                    }
+                    ?>
+                    <div class="accordion">
+                        <div class="accordion-header <?php echo $isSpecialPart ? 'special' : 'normal'; ?>" onclick="toggleAccordion(<?php echo $index; ?>, event)">
+                            <span>
+                                <strong>
+                                    <span class="position-word">Position </span>
+                                    <span class="position-number"><?php echo $displayPosition; ?> - </span>
+                                    <?php echo $kitNumber; ?>
+                                </strong>
+                                <span class="product-name"><?php echo $nom_piece; ?></span>
+                            </span>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div id="accordion-<?php echo $index; ?>" class="accordion-content <?php echo $index === 0 ? 'active' : ''; ?>">
+                            <div class="product-content-container">
+                                <?php if (isset($piece['quantite'])) : ?>
+                                    <div class="product-info-row quantity-row" style="display:flex;">
+                                        <span style="color:#2c5282">Quantité&nbsp;:&nbsp;</span>
+                                        <span>
+                                            <?php 
+                                            echo isEmptyOrSpecialChar($piece['quantite'])
+                                                ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>'
+                                                : '<strong>' . htmlspecialchars($piece['quantite']) . '</strong>';
+                                            ?>
+                                        </span>
+                                    </div>
+                                <?php endif; ?>
+
+                                <div class="details-dropdown">
+                                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                                        <span>Détails supplémentaires</span>
+                                        <span class="dropdown-arrow">▼</span>
+                                    </div>
+                                    <div class="dropdown-content">
+                                        <?php 
+                                        $orderedFields = $isSpecialPart
+                                            ? ['nom_model', 'reference_model', 'reference_piece']
+                                            : ['nom_model', 'reference_model', 'reference_piece', 'contenu_dans_kit'];
+
+                                        foreach ($orderedFields as $field) :
+                                            if (isset($piece[$field])) :
+                                                $label = [
+                                                    'nom_model' => 'Nom du modèle',
+                                                    'reference_model' => 'Référence modèle',
+                                                    'reference_piece' => 'Référence pièce',
+                                                    'contenu_dans_kit' => 'Contenu dans le kit'
+                                                ][$field];
+                                                
+                                                $value = $field === 'contenu_dans_kit'
+                                                    ? (isEmptyOrSpecialChar($piece[$field])
+                                                        ? '<span style="font-weight: bold;">n\'est compris dans aucun kit.</span>'
+                                                        : '<strong>' . htmlspecialchars($piece[$field]) . '</strong>')
+                                                    : (isEmptyOrSpecialChar($piece[$field])
+                                                        ? '<span style="color: red; font-weight: bold;">VALEUR N\'EXISTE PAS</span>'
+                                                        : '<strong>' . htmlspecialchars($piece[$field]) . '</strong>');
+                                                ?>
+                                                <div class="product-info-row">
+                                                    <span style="color:#2c5282"><?php echo $label; ?>&nbsp;:&nbsp;</span>
+                                                    <span><?php echo $value; ?></span>
+                                                </div>
+                                            <?php endif;
+                                        endforeach; ?>
+                                    </div>
+                                </div>
+
+                                <div class="actions-group">
+                                    <div class="quantity-container" style="display:flex;align-items:center;gap:10px">
+                                        <label style="color:#2c5282">Quantité :</label>
+                                        <div style="display:flex;align-items:center">
+                                            <button class="minus-btn" onclick="this.nextElementSibling.stepDown()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:5px 9px;cursor:pointer">-</button>
+                                            <input class="quantity-input" type="number" value="1" min="1" aria-label="Quantité" title="Quantité" style="width:50px;text-align:center;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;border-left:none;border-right:none;padding:7px 0">
+                                            <button onclick="this.previousElementSibling.stepUp()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:5px 9px;cursor:pointer">+</button>
+                                        </div>
+                                    </div>
+                                    <button onclick="ajouterAuPanier('<?php echo $sku; ?>', <?php echo $variation_id; ?>)" class="add-to-cart-btn" style="color:white;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:8px; width: fit-content">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" style="stroke:currentColor;fill:none;stroke-width:2"><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
+                                        Ajouter au panier
+                                    </button>
+                                </div>
+                                <div id="alert-<?php echo $variation_id; ?>" style="display:none;margin-top:10px;padding:15px;border-radius:5px;background-color:#4CAF50;color:white;font-weight:bold;text-align:center">
+                                    <div style="display:flex;justify-content:space-between;align-items:center;gap:5px">
+                                        <span>✓ Produit ajouté au panier avec succès !</span>
+                                        <a href="<?php echo wc_get_cart_url(); ?>" style="background-color:white;color:#4CAF50;padding:8px 15px;border-radius:4px;text-decoration:none;font-weight:bold;transition:all .3s">Voir le panier</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
 
         <div class="zoom-wrapper">
             <div class="zoom-container" id="zoomContainer">
