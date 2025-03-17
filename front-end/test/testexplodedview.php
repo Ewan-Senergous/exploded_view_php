@@ -1129,69 +1129,69 @@ if (!function_exists('addVueEclateeTab')) {
             }
 
             $output .= '<script>
-                async function ajouterAuPanier(reference, productId) {
-                    const btn = event.currentTarget;
-                    const qty = btn.parentElement.querySelector("input[type=number]").value;
+             async function ajouterAuPanier(reference, productId) {
+    const btn = event.currentTarget;
+    const qty = btn.parentElement.querySelector("input[type=number]").value;
 
-                    if (productId === 0) {
-                        
-                        const errorAlert = document.createElement(\'div\');
-                        errorAlert.style.cssText = \'margin-top:10px;padding:15px;border-radius:5px;background-color:#FF0000;color:white;font-weight:bold;text-align:center\';
-                        errorAlert.innerHTML = `
-                            <div class="red-alert" style="display:flex;justify-content:space-between;align-items:center;gap:5px">
-                                <span>X Produit non trouvé dans la base de données</span>
-                                <a href="https://www.cenov-distribution.fr/nous-contacter/"
-                                   style="background-color:white;color:#FF0000;padding:8px 15px;border-radius:4px;text-decoration:none;font-weight:bold;transition:all .3s">
-                                   Nous contacter
-                                </a>
-                            </div>
-                        `;
-                        
-                        btn.parentElement.insertAdjacentElement(\'afterend\', errorAlert);
-                        
-                        return;
-                    }
+    if (productId === 0) {
+        const errorAlert = document.createElement(\'div\');
+        errorAlert.style.cssText = \'margin-top:10px;padding:15px;border-radius:5px;background-color:#FF0000;color:white;font-weight:bold;text-align:center\';
+        errorAlert.innerHTML = `
+            <div class="red-alert" style="display:flex;justify-content:space-between;align-items:center;gap:5px">
+                <span>X Produit non trouvé dans la base de données</span>
+                <a href="https://www.cenov-distribution.fr/nous-contacter/"
+                   style="background-color:white;color:#FF0000;padding:8px 15px;border-radius:4px;text-decoration:none;font-weight:bold;transition:all .3s">
+                   Nous contacter
+                </a>
+            </div>
+        `;
+        
+        btn.parentElement.insertAdjacentElement(\'afterend\', errorAlert);
+        return;
+    }
 
-                    try {
-                        const formData = new FormData();
-                        formData.append("action", "woocommerce_ajax_add_to_cart");
-                        formData.append("product_id", productId);
-                        formData.append("quantity", qty);
-                        formData.append("add-to-cart", productId);
+    try {
+        const formData = new FormData();
+        formData.append("action", "woocommerce_ajax_add_to_cart");
+        formData.append("product_id", productId);
+        formData.append("quantity", qty);
+        formData.append("add-to-cart", productId);
 
-                        let ajaxUrl = "/wp-admin/admin-ajax.php";
-                        if (typeof wc_add_to_cart_params !== "undefined") {
-                            ajaxUrl = wc_add_to_cart_params.wc_ajax_url.toString().replace("%%endpoint%%", "add_to_cart");
-                        }
+        let ajaxUrl = "/wp-admin/admin-ajax.php";
+        if (typeof wc_add_to_cart_params !== "undefined") {
+            ajaxUrl = wc_add_to_cart_params.wc_ajax_url.toString().replace("%%endpoint%%", "add_to_cart");
+        }
 
-                        const response = await fetch(ajaxUrl, {
-                            method: "POST",
-                            body: formData,
-                            credentials: "same-origin"
-                        });
+        const response = await fetch(ajaxUrl, {
+            method: "POST",
+            body: formData,
+            credentials: "same-origin"
+        });
 
-                        if (productId !== 0) {
-                            console.log("✅ SUCCÈS: Produit ajouté au panier!", {
-                                sku: reference,
-                                productId: productId
-                            });
-                            
-                            btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><path d=\'M20 6L9 17l-5-5\'/></svg>Ajouté !</div>";
-                            
-                            const alertElement = document.getElementById(`alert-${productId}`);
-                            if (alertElement) alertElement.style.display = "block";
+        if (productId !== 0) {
+            console.log("✅ SUCCÈS: Produit ajouté au panier!", {
+                sku: reference,
+                productId: productId
+            });
+            
+            btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><path d=\'M20 6L9 17l-5-5\'/></svg>Ajouté !</div>";
+            
+            const alertElement = document.getElementById(`alert-${productId}`);
+            if (alertElement) alertElement.style.display = "block";
+            
+            // Rafraîchir la page après un court délai
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+    } catch (error) {
+        console.log("❌ ERREUR:", error.message);
+    }
 
-                            jQuery(document.body).trigger("wc_fragments_refreshed");
-                        }
-
-                    } catch (error) {
-                        console.log("❌ ERREUR:", error.message);
-                    }
-
-                    setTimeout(() => {
-                        btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><path d=\'M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6\'/><circle cx=\'9\' cy=\'21\' r=\'1\'/><circle cx=\'20\' cy=\'21\' r=\'1\'/></svg>Ajouter au panier</div>";
-                    }, 2000);
-                }
+    setTimeout(() => {
+        btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><path d=\'M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6\'/><circle cx=\'9\' cy=\'21\' r=\'1\'/><circle cx=\'20\' cy=\'21\' r=\'1\'/></svg>Ajouter au panier</div>";
+    }, 2000);
+}
             </script>';
 
             return $output;
