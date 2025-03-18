@@ -293,24 +293,25 @@ if (!function_exists('addVueEclateeTab')) {
         if (empty($svg_url)) {
             return ['positions' => [], 'width' => 0, 'height' => 0];
         }
-
+    
         $svg_content = file_get_contents($svg_url);
         if (substr($svg_content, 0, 2) === "\x1f\x8b") {
             $svg_content = gzdecode($svg_content);
         }
-
+    
         // Extraire width et height avec des expressions régulières
         preg_match('/width="([^"]*)"/', $svg_content, $width_matches);
         preg_match('/height="([^"]*)"/', $svg_content, $height_matches);
-
+    
         // Récupérer les valeurs
-        $svgWidth = floatval($width_matches[1]);
-        $svgHeight = floatval($height_matches[1]);
-
+        $svgWidth = isset($width_matches[1]) ? floatval($width_matches[1]) : 0;
+        $svgHeight = isset($height_matches[1]) ? floatval($height_matches[1]) : 0;
+    
         $positions = [];
-        // Regex modifiée pour chercher spécifiquement les IDs de 1 à 300
-        $pattern = '/<text id="(\d|[1-9]\d|[1-2]\d\d|300)" transform="matrix\(1 0 0 1 ([\d.-]+) ([\d.-]+)\)">/';
-        if (preg_match_all($pattern, $svg_content, $matches)) {
+        
+        // Premier pattern: <text id="205" transform="matrix(1 0 0 1 635.637 403.6521)">
+        $pattern1 = '/<text id="(\d+)" transform="matrix\(1 0 0 1 ([\d.-]+) ([\d.-]+)\)">/';
+        if (preg_match_all($pattern1, $svg_content, $matches)) {
             foreach ($matches[1] as $i => $number) {
                 $x = floatval($matches[2][$i]);
                 $y = floatval($matches[3][$i]);
@@ -322,7 +323,22 @@ if (!function_exists('addVueEclateeTab')) {
                 ];
             }
         }
-
+        
+        // Deuxième pattern: <text transform="matrix(1 0 0 1 200.6177 267.4883)" id="202">
+        $pattern2 = '/<text transform="matrix\(1 0 0 1 ([\d.-]+) ([\d.-]+)\)" id="(\d+)">/';
+        if (preg_match_all($pattern2, $svg_content, $matches)) {
+            foreach ($matches[3] as $i => $number) {
+                $x = floatval($matches[1][$i]);
+                $y = floatval($matches[2][$i]);
+                // Ajouter les positions correspondant au deuxième pattern
+                $positions[] = [
+                    'id' => $number,
+                    'x'  => $x,
+                    'y'  => $y
+                ];
+            }
+        }
+    
         // Tri des positions par 'id' pour conserver l'ordre
         usort($positions, function($a, $b) {
             return $a['id'] <=> $b['id'];

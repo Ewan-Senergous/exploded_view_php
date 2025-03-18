@@ -293,24 +293,25 @@ if (!function_exists('addVueEclateeTab')) {
         if (empty($svg_url)) {
             return ['positions' => [], 'width' => 0, 'height' => 0];
         }
-
+    
         $svg_content = file_get_contents($svg_url);
         if (substr($svg_content, 0, 2) === "\x1f\x8b") {
             $svg_content = gzdecode($svg_content);
         }
-
+    
         // Extraire width et height avec des expressions régulières
         preg_match('/width="([^"]*)"/', $svg_content, $width_matches);
         preg_match('/height="([^"]*)"/', $svg_content, $height_matches);
-
+    
         // Récupérer les valeurs
-        $svgWidth = floatval($width_matches[1]);
-        $svgHeight = floatval($height_matches[1]);
-
+        $svgWidth = isset($width_matches[1]) ? floatval($width_matches[1]) : 0;
+        $svgHeight = isset($height_matches[1]) ? floatval($height_matches[1]) : 0;
+    
         $positions = [];
-        // Regex modifiée pour chercher spécifiquement les IDs de 1 à 300
-        $pattern = '/<text id="(\d|[1-9]\d|[1-2]\d\d|300)" transform="matrix\(1 0 0 1 ([\d.-]+) ([\d.-]+)\)">/';
-        if (preg_match_all($pattern, $svg_content, $matches)) {
+        
+        // Premier pattern: <text id="205" transform="matrix(1 0 0 1 635.637 403.6521)">
+        $pattern1 = '/<text id="(\d+)" transform="matrix\(1 0 0 1 ([\d.-]+) ([\d.-]+)\)">/';
+        if (preg_match_all($pattern1, $svg_content, $matches)) {
             foreach ($matches[1] as $i => $number) {
                 $x = floatval($matches[2][$i]);
                 $y = floatval($matches[3][$i]);
@@ -322,7 +323,63 @@ if (!function_exists('addVueEclateeTab')) {
                 ];
             }
         }
+        
+        // Deuxième pattern: <text transform="matrix(1 0 0 1 200.6177 267.4883)" id="202">
+        $pattern2 = '/<text transform="matrix\(1 0 0 1 ([\d.-]+) ([\d.-]+)\)" id="(\d+)">/';
+        if (preg_match_all($pattern2, $svg_content, $matches)) {
+            foreach ($matches[3] as $i => $number) {
+                $x = floatval($matches[1][$i]);
+                $y = floatval($matches[2][$i]);
+                // Ajouter les positions correspondant au deuxième pattern
+                $positions[] = [
+                    'id' => $number,
+                    'x'  => $x,
+                    'y'  => $y
+                ];
+            }
+        }
 
+       // Troisième pattern: capture les balises text sans attribut id
+$pattern3 = '/<text transform="matrix\(1 0 0 1 ([\d.-]+) ([\d.-]+)\)"([^>]*)>(?:\s*)<tspan[^>]*>(.*?)<\/tspan>/s';
+if (preg_match_all($pattern3, $svg_content, $matches)) {
+    foreach ($matches[4] as $i => $content) {
+        // Vérifier si l'attribut id n'est pas présent
+        $attributes = $matches[3][$i];
+        if (strpos($attributes, 'id=') === false) {
+            $x = floatval($matches[1][$i]);
+            $y = floatval($matches[2][$i]);
+            
+            // Nettoyer le contenu
+            $content = trim($content);
+            
+            // Ajouter la position
+            $positions[] = [
+                'id' => $content,
+                'x'  => $x,
+                'y'  => $y
+            ];
+        }
+    }
+}
+
+       $pattern4 = '/<text transform="matrix\(1 0 0 1 ([\d.-]+) ([\d.-]+)\)" id="([^"]*)">/';
+if (preg_match_all($pattern4, $svg_content, $matches)) {
+    foreach ($matches[3] as $i => $id) {
+        // On capture tous les IDs non numériques ou contenant des caractères spéciaux
+        if (!preg_match('/^\d+$/', $id)) {
+            $x = floatval($matches[1][$i]);
+            $y = floatval($matches[2][$i]);
+            
+            // Ajouter la position avec l'ID tel quel
+            $positions[] = [
+                'id' => $id,
+                'x'  => $x,
+                'y'  => $y
+            ];
+        }
+    }
+}
+    
         // Tri des positions par 'id' pour conserver l'ordre
         usort($positions, function($a, $b) {
             return $a['id'] <=> $b['id'];
@@ -1129,69 +1186,69 @@ if (!function_exists('addVueEclateeTab')) {
             }
 
             $output .= '<script>
-             async function ajouterAuPanier(reference, productId) {
-    const btn = event.currentTarget;
-    const qty = btn.parentElement.querySelector("input[type=number]").value;
+                async function ajouterAuPanier(reference, productId) {
+                    const btn = event.currentTarget;
+                    const qty = btn.parentElement.querySelector("input[type=number]").value;
 
-    if (productId === 0) {
-        const errorAlert = document.createElement(\'div\');
-        errorAlert.style.cssText = \'margin-top:10px;padding:15px;border-radius:5px;background-color:#FF0000;color:white;font-weight:bold;text-align:center\';
-        errorAlert.innerHTML = `
-            <div class="red-alert" style="display:flex;justify-content:space-between;align-items:center;gap:5px">
-                <span>X Produit non trouvé dans la base de données</span>
-                <a href="https://www.cenov-distribution.fr/nous-contacter/"
-                   style="background-color:white;color:#FF0000;padding:8px 15px;border-radius:4px;text-decoration:none;font-weight:bold;transition:all .3s">
-                   Nous contacter
-                </a>
-            </div>
-        `;
-        
-        btn.parentElement.insertAdjacentElement(\'afterend\', errorAlert);
-        return;
-    }
+                    if (productId === 0) {
+                        
+                        const errorAlert = document.createElement(\'div\');
+                        errorAlert.style.cssText = \'margin-top:10px;padding:15px;border-radius:5px;background-color:#FF0000;color:white;font-weight:bold;text-align:center\';
+                        errorAlert.innerHTML = `
+                            <div class="red-alert" style="display:flex;justify-content:space-between;align-items:center;gap:5px">
+                                <span>X Produit non trouvé dans la base de données</span>
+                                <a href="https://www.cenov-distribution.fr/nous-contacter/"
+                                   style="background-color:white;color:#FF0000;padding:8px 15px;border-radius:4px;text-decoration:none;font-weight:bold;transition:all .3s">
+                                   Nous contacter
+                                </a>
+                            </div>
+                        `;
+                        
+                        btn.parentElement.insertAdjacentElement(\'afterend\', errorAlert);
+                        
+                        return;
+                    }
 
-    try {
-        const formData = new FormData();
-        formData.append("action", "woocommerce_ajax_add_to_cart");
-        formData.append("product_id", productId);
-        formData.append("quantity", qty);
-        formData.append("add-to-cart", productId);
+                    try {
+                        const formData = new FormData();
+                        formData.append("action", "woocommerce_ajax_add_to_cart");
+                        formData.append("product_id", productId);
+                        formData.append("quantity", qty);
+                        formData.append("add-to-cart", productId);
 
-        let ajaxUrl = "/wp-admin/admin-ajax.php";
-        if (typeof wc_add_to_cart_params !== "undefined") {
-            ajaxUrl = wc_add_to_cart_params.wc_ajax_url.toString().replace("%%endpoint%%", "add_to_cart");
-        }
+                        let ajaxUrl = "/wp-admin/admin-ajax.php";
+                        if (typeof wc_add_to_cart_params !== "undefined") {
+                            ajaxUrl = wc_add_to_cart_params.wc_ajax_url.toString().replace("%%endpoint%%", "add_to_cart");
+                        }
 
-        const response = await fetch(ajaxUrl, {
-            method: "POST",
-            body: formData,
-            credentials: "same-origin"
-        });
+                        const response = await fetch(ajaxUrl, {
+                            method: "POST",
+                            body: formData,
+                            credentials: "same-origin"
+                        });
 
-        if (productId !== 0) {
-            console.log("✅ SUCCÈS: Produit ajouté au panier!", {
-                sku: reference,
-                productId: productId
-            });
-            
-            btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><path d=\'M20 6L9 17l-5-5\'/></svg>Ajouté !</div>";
-            
-            const alertElement = document.getElementById(`alert-${productId}`);
-            if (alertElement) alertElement.style.display = "block";
-            
-            // Rafraîchir la page après un court délai
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
-        }
-    } catch (error) {
-        console.log("❌ ERREUR:", error.message);
-    }
+                        if (productId !== 0) {
+                            console.log("✅ SUCCÈS: Produit ajouté au panier!", {
+                                sku: reference,
+                                productId: productId
+                            });
+                            
+                            btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><path d=\'M20 6L9 17l-5-5\'/></svg>Ajouté !</div>";
+                            
+                            const alertElement = document.getElementById(`alert-${productId}`);
+                            if (alertElement) alertElement.style.display = "block";
 
-    setTimeout(() => {
-        btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><path d=\'M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6\'/><circle cx=\'9\' cy=\'21\' r=\'1\'/><circle cx=\'20\' cy=\'21\' r=\'1\'/></svg>Ajouter au panier</div>";
-    }, 2000);
-}
+                            jQuery(document.body).trigger("wc_fragments_refreshed");
+                        }
+
+                    } catch (error) {
+                        console.log("❌ ERREUR:", error.message);
+                    }
+
+                    setTimeout(() => {
+                        btn.innerHTML = "<div style=\'display:flex;gap:8px;align-items:center;\'><svg width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' style=\'stroke:currentColor;fill:none;stroke-width:2;\'><path d=\'M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6\'/><circle cx=\'9\' cy=\'21\' r=\'1\'/><circle cx=\'20\' cy=\'21\' r=\'1\'/></svg>Ajouter au panier</div>";
+                    }, 2000);
+                }
             </script>';
 
             return $output;
