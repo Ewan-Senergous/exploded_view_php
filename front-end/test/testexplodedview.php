@@ -294,98 +294,124 @@ if (!function_exists('addVueEclateeTab')) {
             return ['positions' => [], 'width' => 0, 'height' => 0];
         }
     
+        // Récupération du contenu SVG
         $svg_content = file_get_contents($svg_url);
+        if ($svg_content === false) {
+            return ['positions' => [], 'width' => 0, 'height' => 0];
+        }
+        
+        // Décompression si nécessaire
         if (substr($svg_content, 0, 2) === "\x1f\x8b") {
             $svg_content = gzdecode($svg_content);
         }
     
-        // Extraire width et height avec des expressions régulières
+        // Extraction des dimensions
+        preg_match('/viewBox="([^"]*)"/', $svg_content, $viewbox_matches);
         preg_match('/width="([^"]*)"/', $svg_content, $width_matches);
         preg_match('/height="([^"]*)"/', $svg_content, $height_matches);
     
-        // Récupérer les valeurs
         $svgWidth = isset($width_matches[1]) ? floatval($width_matches[1]) : 0;
         $svgHeight = isset($height_matches[1]) ? floatval($height_matches[1]) : 0;
     
+        // Si pas de dimensions spécifiques mais un viewBox
+        if (($svgWidth === 0 || $svgHeight === 0) && isset($viewbox_matches[1])) {
+            $viewBox = explode(' ', $viewbox_matches[1]);
+            if (count($viewBox) >= 4) {
+                $svgWidth = floatval($viewBox[2]);
+                $svgHeight = floatval($viewBox[3]);
+            }
+        }
+    
         $positions = [];
         
-        // Premier pattern: <text id="205" transform="matrix(1 0 0 1 635.637 403.6521)">
-        $pattern1 = '/<text id="(\d+)" transform="matrix\(1 0 0 1 ([\d.-]+) ([\d.-]+)\)">/';
+        // Pattern 1: <text transform="matrix(1 0 0 1 34.311 166.437)" id="114">
+        $pattern1 = '/<text transform="matrix\(1 0 0 1 ([\d.]+) ([\d.]+)\)" id="([^"]+)">/';
         if (preg_match_all($pattern1, $svg_content, $matches)) {
-            foreach ($matches[1] as $i => $number) {
-                $x = floatval($matches[2][$i]);
-                $y = floatval($matches[3][$i]);
-                // Conserver tous les doublons en stockant chaque position sans écrasement
-                $positions[] = [
-                    'id' => $number,
-                    'x'  => $x,
-                    'y'  => $y
-                ];
-            }
-        }
-        
-        // Deuxième pattern: <text transform="matrix(1 0 0 1 200.6177 267.4883)" id="202">
-        $pattern2 = '/<text transform="matrix\(1 0 0 1 ([\d.-]+) ([\d.-]+)\)" id="(\d+)">/';
-        if (preg_match_all($pattern2, $svg_content, $matches)) {
-            foreach ($matches[3] as $i => $number) {
+            foreach ($matches[3] as $i => $id) {
                 $x = floatval($matches[1][$i]);
                 $y = floatval($matches[2][$i]);
-                // Ajouter les positions correspondant au deuxième pattern
                 $positions[] = [
-                    'id' => $number,
+                    'id' => $id,
                     'x'  => $x,
                     'y'  => $y
                 ];
             }
         }
-
-       // Troisième pattern: capture les balises text sans attribut id
-$pattern3 = '/<text transform="matrix\(1 0 0 1 ([\d.-]+) ([\d.-]+)\)"([^>]*)>(?:\s*)<tspan[^>]*>(.*?)<\/tspan>/s';
-if (preg_match_all($pattern3, $svg_content, $matches)) {
-    foreach ($matches[4] as $i => $content) {
-        // Vérifier si l'attribut id n'est pas présent
-        $attributes = $matches[3][$i];
-        if (strpos($attributes, 'id=') === false) {
-            $x = floatval($matches[1][$i]);
-            $y = floatval($matches[2][$i]);
-            
-            // Nettoyer le contenu
-            $content = trim($content);
-            
-            // Ajouter la position
-            $positions[] = [
-                'id' => $content,
-                'x'  => $x,
-                'y'  => $y
-            ];
+        
+        // Pattern 2: <text id="205" transform="matrix(1 0 0 1 635.637 403.6521)">
+        $pattern2 = '/<text id="([^"]+)" transform="matrix\(1 0 0 1 ([\d.]+) ([\d.]+)\)">/';
+        if (preg_match_all($pattern2, $svg_content, $matches)) {
+            foreach ($matches[1] as $i => $id) {
+                $x = floatval($matches[2][$i]);
+                $y = floatval($matches[3][$i]);
+                $positions[] = [
+                    'id' => $id,
+                    'x'  => $x,
+                    'y'  => $y
+                ];
+            }
         }
-    }
-}
-
-       $pattern4 = '/<text transform="matrix\(1 0 0 1 ([\d.-]+) ([\d.-]+)\)" id="([^"]*)">/';
-if (preg_match_all($pattern4, $svg_content, $matches)) {
-    foreach ($matches[3] as $i => $id) {
-        // On capture tous les IDs non numériques ou contenant des caractères spéciaux
-        if (!preg_match('/^\d+$/', $id)) {
-            $x = floatval($matches[1][$i]);
-            $y = floatval($matches[2][$i]);
-            
-            // Ajouter la position avec l'ID tel quel
-            $positions[] = [
-                'id' => $id,
-                'x'  => $x,
-                'y'  => $y
-            ];
+        
+        // Pattern 3: <text transform="matrix(1 0 0 1 200.6177 267.4883)">
+        // Capture les textes sans attribut id mais avec contenu tspan
+        $pattern3 = '/<text transform="matrix\(1 0 0 1 ([\d.]+) ([\d.]+)\)"[^>]*>(?:\s*)<tspan[^>]*>(.*?)<\/tspan>/s';
+        if (preg_match_all($pattern3, $svg_content, $matches)) {
+            foreach ($matches[3] as $i => $content) {
+                $x = floatval($matches[1][$i]);
+                $y = floatval($matches[2][$i]);
+                $content = trim($content);
+                
+                // Vérifier si ce contenu est numérique et utilisable comme ID
+                if (is_numeric($content) || preg_match('/^(\d+)(\/\d+)*$/', $content)) {
+                    $positions[] = [
+                        'id' => $content,
+                        'x'  => $x,
+                        'y'  => $y
+                    ];
+                }
+            }
         }
-    }
-}
-    
-        // Tri des positions par 'id' pour conserver l'ordre
-        usort($positions, function($a, $b) {
-            return $a['id'] <=> $b['id'];
+        
+        // Si aucune position n'a été trouvée, essayer une approche différente pour les SVG avec structure différente
+        if (empty($positions)) {
+            // Pattern alternatif pour les textes dans des structures différentes
+            $pattern4 = '/<text[^>]*>(?:\s*)<tspan[^>]*>(.*?)<\/tspan>/s';
+            preg_match_all($pattern4, $svg_content, $text_matches);
+            
+            // Pattern pour les transformations
+            $pattern5 = '/transform="matrix\(1 0 0 1 ([\d.]+) ([\d.]+)\)"/';
+            preg_match_all($pattern5, $svg_content, $transform_matches);
+            
+            // Associer les textes et transformations si le nombre correspond
+            if (count($text_matches[1]) == count($transform_matches[1])) {
+                for ($i = 0; $i < count($text_matches[1]); $i++) {
+                    $content = trim($text_matches[1][$i]);
+                    if (is_numeric($content) || preg_match('/^\d+\/\d+$/', $content)) {
+                        $positions[] = [
+                            'id' => $content,
+                            'x'  => floatval($transform_matches[1][$i]),
+                            'y'  => floatval($transform_matches[2][$i])
+                        ];
+                    }
+                }
+            }
+        }
+        
+        // Filtrer les positions pour ne garder que celles avec des IDs numériques ou au format "xx/xx"
+        $filtered_positions = array_filter($positions, function($pos) {
+            return is_numeric($pos['id']) || preg_match('/^(\d+)(\/\d+)*$/', $pos['id']);
         });
         
-        return ['positions' => $positions, 'width' => $svgWidth, 'height' => $svgHeight];
+        // Si après filtrage il ne reste plus rien mais qu'on avait des positions, garder les originales
+        if (empty($filtered_positions) && !empty($positions)) {
+            $filtered_positions = $positions;
+        }
+        
+        return [
+            'positions' => $filtered_positions, 
+            'width' => $svgWidth, 
+            'height' => $svgHeight
+        ];
     }
     
     function tooltipVeFunction() {
