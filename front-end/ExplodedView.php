@@ -362,7 +362,7 @@ if (!function_exists('addVueEclateeTab')) {
                 $content = trim($content);
                 
                 // Vérifier si ce contenu est numérique et utilisable comme ID
-                if (is_numeric($content) || preg_match('/^\d+\/\d+$/', $content)) {
+                if (is_numeric($content) || preg_match('/\d+/', $content)) {
                     $positions[] = [
                         'id' => $content,
                         'x'  => $x,
@@ -373,34 +373,34 @@ if (!function_exists('addVueEclateeTab')) {
         }
         
         // Si aucune position n'a été trouvée, essayer une approche différente pour les SVG avec structure différente
-        if (empty($positions)) {
-            // Pattern alternatif pour les textes dans des structures différentes
-            $pattern4 = '/<text[^>]*>(?:\s*)<tspan[^>]*>(.*?)<\/tspan>/s';
-            preg_match_all($pattern4, $svg_content, $text_matches);
-            
-            // Pattern pour les transformations
-            $pattern5 = '/transform="matrix\(1 0 0 1 ([\d.]+) ([\d.]+)\)"/';
-            preg_match_all($pattern5, $svg_content, $transform_matches);
-            
-            // Associer les textes et transformations si le nombre correspond
-            if (count($text_matches[1]) == count($transform_matches[1])) {
-                for ($i = 0; $i < count($text_matches[1]); $i++) {
-                    $content = trim($text_matches[1][$i]);
-                    if (is_numeric($content) || preg_match('/^\d+\/\d+$/', $content)) {
-                        $positions[] = [
-                            'id' => $content,
-                            'x'  => floatval($transform_matches[1][$i]),
-                            'y'  => floatval($transform_matches[2][$i])
-                        ];
-                    }
-                }
+       if (empty($positions)) {
+    // Pattern alternatif pour les textes dans des structures différentes
+    $pattern4 = '/<text[^>]*>(?:\s*)<tspan[^>]*>(.*?)<\/tspan>/s';
+    preg_match_all($pattern4, $svg_content, $text_matches);
+    
+    // Pattern pour les transformations
+    $pattern5 = '/transform="matrix\(1 0 0 1 ([\d.]+) ([\d.]+)\)"/';
+    preg_match_all($pattern5, $svg_content, $transform_matches);
+    
+    // Associer les textes et transformations si le nombre correspond
+    if (count($text_matches[1]) == count($transform_matches[1])) {
+        for ($i = 0; $i < count($text_matches[1]); $i++) {
+            $content = trim($text_matches[1][$i]);
+            if (is_numeric($content) || preg_match('/\d+/', $content)) {
+                $positions[] = [
+                    'id' => $content,
+                    'x'  => floatval($transform_matches[1][$i]),
+                    'y'  => floatval($transform_matches[2][$i])
+                ];
             }
         }
-        
+    }
+}
+
         // Filtrer les positions pour ne garder que celles avec des IDs numériques ou au format "xx/xx"
-        $filtered_positions = array_filter($positions, function($pos) {
-            return is_numeric($pos['id']) || preg_match('/^\d+\/\d+$/', $pos['id']);
-        });
+       $filtered_positions = array_filter($positions, function($pos) {
+    return ($pos['id'] !== '/') && (is_numeric($pos['id']) || preg_match('/\d+/', $pos['id']));
+});
         
         // Si après filtrage il ne reste plus rien mais qu'on avait des positions, garder les originales
         if (empty($filtered_positions) && !empty($positions)) {

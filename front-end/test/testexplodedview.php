@@ -397,12 +397,10 @@ if (!function_exists('addVueEclateeTab')) {
     }
 }
 
-
-        
         // Filtrer les positions pour ne garder que celles avec des IDs numériques ou au format "xx/xx"
-        $filtered_positions = array_filter($positions, function($pos) {
-            return is_numeric($pos['id']) || preg_match('/\d+/', $pos['id']);
-        });
+       $filtered_positions = array_filter($positions, function($pos) {
+    return ($pos['id'] !== '/') && (is_numeric($pos['id']) || preg_match('/\d+/', $pos['id']));
+});
         
         // Si après filtrage il ne reste plus rien mais qu'on avait des positions, garder les originales
         if (empty($filtered_positions) && !empty($positions)) {
@@ -443,6 +441,13 @@ if (!function_exists('addVueEclateeTab')) {
 
         ?>
         <style>
+        :root {
+            --piece-bg-color: rgba(255, 0, 0, 0.2);
+            --piece-border-color: rgba(255, 0, 0, 0.4);
+            --piece-selected-bg-color: rgba(0, 86, 179, 0.3);
+            --piece-selected-border-color: rgba(0, 86, 179, 0.5);
+        }
+        
         .piece-hover {
             position: absolute;
             cursor: pointer;
@@ -454,8 +459,8 @@ if (!function_exists('addVueEclateeTab')) {
             z-index: 1000;
             margin-left: -3.5px;
             margin-top: -11.5px;
-            background-color: rgba(255, 0, 0, 0.3);
-            border-color: rgba(255, 0, 0, 0.5);
+            background-color: var(--piece-bg-color);
+            border-color: var(--piece-border-color);
         }
         </style>
         <script>
@@ -465,7 +470,19 @@ if (!function_exists('addVueEclateeTab')) {
             
             // Dimensions originales du SVG
             const SVG_WIDTH = <?php echo $svgWidth; ?>;
-            const svgHeight$svgHeight = <?php echo $svgHeight; ?>;
+            const svgHeight = <?php echo $svgHeight; ?>;
+            
+            // Définition des constantes de couleur en JavaScript
+            const COLORS = {
+                default: {
+                    bg: getComputedStyle(document.documentElement).getPropertyValue('--piece-bg-color').trim(),
+                    border: getComputedStyle(document.documentElement).getPropertyValue('--piece-border-color').trim()
+                },
+                selected: {
+                    bg: getComputedStyle(document.documentElement).getPropertyValue('--piece-selected-bg-color').trim(),
+                    border: getComputedStyle(document.documentElement).getPropertyValue('--piece-selected-border-color').trim()
+                }
+            };
             
             // Fonction modifiée pour calculer le facteur d'échelle et la translation
             function calculateScale() {
@@ -475,7 +492,7 @@ if (!function_exists('addVueEclateeTab')) {
                 
                 return {
                     scaleX: imageRect.width / SVG_WIDTH,
-                    scaleY: imageRect.height / svgHeight$svgHeight,
+                    scaleY: imageRect.height / svgHeight,
                     translateX: matrix.e || 0,
                     translateY: matrix.f || 0,
                     zoom: window.scale || 1
@@ -488,8 +505,11 @@ if (!function_exists('addVueEclateeTab')) {
                 // Récupérer toutes les positions valides depuis les accordéons
                 document.querySelectorAll('.accordion-header').forEach(header => {
                     const posText = header.querySelector('span').textContent;
-                    const pos = parseInt(posText.match(/Position (\d+)/)[1]);
-                    validPositions.add(pos);
+                    const matches = posText.match(/Position (\d+)/);
+                    if (matches) {
+                        const pos = parseInt(matches[1]);
+                        validPositions.add(pos);
+                    }
                 });
 
                 // Appliquer les couleurs initiales et sauvegarder l'état
@@ -501,11 +521,9 @@ if (!function_exists('addVueEclateeTab')) {
                     point.setAttribute('data-exists', exists.toString());
                     point.setAttribute('data-state', exists ? 'normal' : 'invalid');
                     
-                    // Appliquer la couleur initiale
-                    if (!exists) {
-                        point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                        point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
-                    }
+                    // Appliquer la couleur initiale à tous les points
+                    point.style.backgroundColor = COLORS.default.bg;
+                    point.style.borderColor = COLORS.default.border;
                 });
             }
 
@@ -525,9 +543,9 @@ if (!function_exists('addVueEclateeTab')) {
                     // Vérifier si le point est sélectionné
                     const isSelected = point.getAttribute('data-selected') === 'true';
                     
-                    // Je veux pour écran inéferieur à 768 px une nouvelle width, height, marginLeft et marginTop
+                    // Ajuster la taille en fonction du périphérique et du niveau de zoom
                     if (window.innerWidth <= 768) {
-                        // Appliquer les dimensions de zoom
+                        // Styles pour mobile
                         if (position >= 10 && position < 100) {
                             point.style.width = '22px';
                             point.style.height = '20px';
@@ -545,59 +563,59 @@ if (!function_exists('addVueEclateeTab')) {
                             point.style.marginTop = '-7.5px';
                         }
                     } else {
-                    if (currentZoom >= 2) { // 200%
-                        // Appliquer les dimensions de zoom
-                        if (position >= 10 && position < 100) {
-                            point.style.width = '39px';
-                            point.style.height = '32px';
-                            point.style.marginLeft = '-7px';
-                            point.style.marginTop = '-23px';
-                        } else if (position >= 100) {
-                            point.style.width = '49px';
-                            point.style.height = '32px';
-                            point.style.marginLeft = '-7px';
-                            point.style.marginTop = '-23px';
+                        // Styles pour desktop en fonction du niveau de zoom
+                        if (currentZoom >= 2) { // 200%
+                            if (position >= 10 && position < 100) {
+                                point.style.width = '39px';
+                                point.style.height = '32px';
+                                point.style.marginLeft = '-7px';
+                                point.style.marginTop = '-23px';
+                            } else if (position >= 100) {
+                                point.style.width = '49px';
+                                point.style.height = '32px';
+                                point.style.marginLeft = '-7px';
+                                point.style.marginTop = '-23px';
+                            } else {
+                                point.style.width = '30px';
+                                point.style.height = '32px';
+                                point.style.marginLeft = '-7px';
+                                point.style.marginTop = '-23px';
+                            }
                         } else {
-                            point.style.width = '30px';
-                            point.style.height = '32px';
-                            point.style.marginLeft = '-7px';
-                            point.style.marginTop = '-23px';
-                        }
-                    } else {
-                        // Dimensions originales pour zoom normal
-                        if (position >= 10 && position < 100) {
-                            point.style.width = '20px';
-                            point.style.height = '16px';
-                            point.style.marginLeft = '-3.5px';
-                            point.style.marginTop = '-11px';
-                        } else if (position >= 100) {
-                            point.style.width = '25px';
-                            point.style.height = '16px';
-                            point.style.marginLeft = '-3.5px';
-                            point.style.marginTop = '-11px';
-                        } else {
-                            point.style.width = '15px';
-                            point.style.height = '16px';
-                            point.style.marginLeft = '-3.5px';
-                            point.style.marginTop = '-11.5px';
+                            // Dimensions originales pour zoom normal
+                            if (position >= 10 && position < 100) {
+                                point.style.width = '20px';
+                                point.style.height = '16px';
+                                point.style.marginLeft = '-3.5px';
+                                point.style.marginTop = '-11px';
+                            } else if (position >= 100) {
+                                point.style.width = '25px';
+                                point.style.height = '16px';
+                                point.style.marginLeft = '-3.5px';
+                                point.style.marginTop = '-11px';
+                            } else {
+                                point.style.width = '15px';
+                                point.style.height = '16px';
+                                point.style.marginLeft = '-3.5px';
+                                point.style.marginTop = '-11.5px';
+                            }
                         }
                     }
-                }
 
-                    // Appliquer les couleurs en fonction de la sélection
+                    // Appliquer les couleurs en fonction de l'état
                     const state = point.getAttribute('data-state');
                     switch(state) {
                         case 'invalid':
-                            point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                            point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
+                            point.style.backgroundColor = COLORS.default.bg;
+                            point.style.borderColor = COLORS.default.border;
                             break;
                         case 'selected':
-                            point.style.backgroundColor = 'rgba(0, 86, 179, 0.3)';
-                            point.style.borderColor = 'rgba(0, 86, 179, 0.5)';
+                            point.style.backgroundColor = COLORS.selected.bg;
+                            point.style.borderColor = COLORS.selected.border;
                             break;
                         default: // normal
-                        point.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                        point.style.borderColor = 'rgba(255, 0, 0, 0.5)';
+                            point.style.backgroundColor = COLORS.default.bg;
+                            point.style.borderColor = COLORS.default.border;
                     }
                     
                     point.style.transform = `translate(${scaledX}px, ${scaledY}px) scale(${transforms.zoom})`;
@@ -611,8 +629,8 @@ if (!function_exists('addVueEclateeTab')) {
                 const headers = document.querySelectorAll('.accordion-header');
                 for (let header of headers) {
                     const posText = header.querySelector('span').textContent;
-                    const pos = parseInt(posText.match(/Position (\d+)/)[1]);
-                    if (pos === parseInt(position)) {
+                    const matches = posText.match(/Position (\d+)/);
+                    if (matches && parseInt(matches[1]) === parseInt(position)) {
                         return true;
                     }
                 }
@@ -630,15 +648,10 @@ if (!function_exists('addVueEclateeTab')) {
                         point<?php echo $index; ?>.setAttribute('data-position', '<?php echo $position['id']; ?>');
                         point<?php echo $index; ?>.setAttribute('data-original-x', '<?php echo $position['x']; ?>');
                         point<?php echo $index; ?>.setAttribute('data-original-y', '<?php echo $position['y']; ?>');
-
-                        // Initialiser la couleur en fonction de l'existence de la position
-                        if (!positionExists(<?php echo $position['id']; ?>)) {
-                            point<?php echo $index; ?>.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                            point<?php echo $index; ?>.style.borderColor = 'rgba(255, 0, 0, 0.5)';
-                        } else {
-                            point<?php echo $index; ?>.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
-                            point<?php echo $index; ?>.style.borderColor = 'rgba(255, 0, 0, 0.5)';
-                        }
+                        
+                        // Initialiser l'état avec "normal" par défaut
+                        point<?php echo $index; ?>.setAttribute('data-state', 'normal');
+                        point<?php echo $index; ?>.setAttribute('data-selected', 'false');
 
                         // Ajuster la taille selon l'ID
                         if (<?php echo $position['id']; ?> >= 10 && <?php echo $position['id']; ?> < 100) {
@@ -738,26 +751,24 @@ if (!function_exists('addVueEclateeTab')) {
             // Constantes de couleurs pour éviter la répétition
             const COLORS = {
                 default: {
-                    bg: 'rgba(255, 0, 0, 0.3)',
-                    border: 'rgba(255, 0, 0, 0.5)'
+                    bg: getComputedStyle(document.documentElement).getPropertyValue('--piece-bg-color').trim() || 'rgba(255, 0, 0, 0.2)',
+                    border: getComputedStyle(document.documentElement).getPropertyValue('--piece-border-color').trim() || 'rgba(255, 0, 0, 0.4)'
                 },
                 selected: {
-                    bg: 'rgba(0, 86, 179, 0.3)',
-                    border: 'rgba(0, 86, 179, 0.5)'
+                    bg: getComputedStyle(document.documentElement).getPropertyValue('--piece-selected-bg-color').trim() || 'rgba(0, 86, 179, 0.3)',
+                    border: getComputedStyle(document.documentElement).getPropertyValue('--piece-selected-border-color').trim() || 'rgba(0, 86, 179, 0.5)'
                 }
             };
-
+    
             function resetAllPoints() {
                 document.querySelectorAll('.piece-hover').forEach(point => {
-                    
-                    const exists = point.getAttribute('data-exists') === 'true';
                     point.style.backgroundColor = COLORS.default.bg;
                     point.style.borderColor = COLORS.default.border;
                     point.setAttribute('data-selected', 'false');
+                    point.setAttribute('data-state', 'normal');
                 });
             }
-
-           
+    
             function findAccordionByPosition(position) {
                 const headers = document.querySelectorAll('.accordion-header');
                 for (let header of headers) {
@@ -776,20 +787,19 @@ if (!function_exists('addVueEclateeTab')) {
                 }
                 return null;
             }
-
+    
             function openAccordionForPosition(position, fromAccordion = false) {
                 const accordion = findAccordionByPosition(position);
                 if (!accordion) return;
-
+    
                 resetAllPoints();
-
+    
                 // Mise à jour des points
                 document.querySelectorAll('.piece-hover').forEach(point => {
                     const isCurrentPosition = point.getAttribute('data-position') === position.toString();
-                    point.setAttribute('data-state', isCurrentPosition ? 'selected' :
-                        (point.getAttribute('data-exists') === 'true' ? 'normal' : 'invalid'));
+                    point.setAttribute('data-state', isCurrentPosition ? 'selected' : 'normal');
                 });
-
+    
                 // Ne pas modifier l'accordéon si le clic vient de l'accordéon lui-même
                 if (!fromAccordion) {
                     // Fermer tous les accordéons d'abord
@@ -798,12 +808,12 @@ if (!function_exists('addVueEclateeTab')) {
                         content.classList.remove('active');
                         content.previousElementSibling.querySelector('.arrow').innerHTML = '▼';
                     });
-
+    
                     // Ouvrir l'accordéon sélectionné
                     accordion.content.style.display = 'block';
                     accordion.content.classList.add('active');
                     accordion.header.querySelector('.arrow').innerHTML = '▲';
-
+    
                     // Scroll vers l'accordéon
                     const scrollContainer = document.querySelector('.scroll-container');
                     if (scrollContainer) {
@@ -812,14 +822,13 @@ if (!function_exists('addVueEclateeTab')) {
                         scrollContainer.scrollTop += (accordionTop - containerTop);
                     }
                 }
-
+    
                 // Mise à jour du point sélectionné
                 document.querySelectorAll(`.piece-hover[data-position="${position}"]`).forEach(point => {
-                    if (point.getAttribute('data-exists') === 'true') {
-                        point.style.backgroundColor = COLORS.selected.bg;
-                        point.style.borderColor = COLORS.selected.border;
-                        point.setAttribute('data-selected', 'true');
-                    }
+                    point.style.backgroundColor = COLORS.selected.bg;
+                    point.style.borderColor = COLORS.selected.border;
+                    point.setAttribute('data-selected', 'true');
+                    point.setAttribute('data-state', 'selected');
                 });
             }
                 
@@ -833,7 +842,7 @@ if (!function_exists('addVueEclateeTab')) {
                     }, { passive: false });
                 });
             });
-
+    
             document.querySelectorAll('.accordion-header').forEach(header => {
                 ['click', 'touchstart'].forEach(eventType => {
                     header.addEventListener(eventType, (e) => {
