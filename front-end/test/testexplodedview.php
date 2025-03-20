@@ -1025,9 +1025,8 @@ if (!function_exists('addVueEclateeTab')) {
 
             $jsonData = json_decode(preg_replace(WHITESPACE_PATTERN, ' ', $cross_ref), true);
 
-            $output = '<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">';
+            $output = '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;600&display=swap" rel="stylesheet">';
             $output .= '<style>
-                * { font-family: "Poppins", sans-serif; font-size: 18px; }
                 .position-word, .position-number { display: inline; }
                 .special .position-word, .special .position-number { display: none; }
                 .add-to-cart-btn { background-color: #e31206 !important; transition: background-color .3s; }
@@ -1036,6 +1035,7 @@ if (!function_exists('addVueEclateeTab')) {
                 .position-text, .product-name { font-weight: 600; font-size: 18px; }
                 .scroll-container { max-height: 600px; overflow-y: auto; }
                 .zoom-controls.desktop { display: block; }
+                .zoom-controls button { font-size: 18px; }
                 @media (max-width: 768px) {
                     .zoom-controls.desktop { display: none !important; }
                     .scroll-container { max-height: 400px !important; }
@@ -1187,12 +1187,12 @@ if (!function_exists('addVueEclateeTab')) {
                                     <div class="quantity-container" style="display:flex;align-items:center;gap:10px">
                                         <label style="color:#2c5282">Quantité :</label>
                                         <div style="display:flex;align-items:center">
-                                            <button onclick="this.nextElementSibling.stepDown()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:5px 9px;cursor:pointer">-</button>
-                                            <input type="number" value="1" min="1" aria-label="Quantité" title="Quantité" style="width:50px;text-align:center;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;border-left:none;border-right:none;padding:7px 0">
-                                            <button onclick="this.previousElementSibling.stepUp()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:5px 9px;cursor:pointer">+</button>
+                                            <button onclick="this.nextElementSibling.stepDown()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:5px 9px;cursor:pointer; font-size:18px;">-</button>
+                                            <input type="number" value="1" min="1" aria-label="Quantité" title="Quantité" style="width:50px;text-align:center;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;border-left:none;border-right:none;padding:7px 0; font-size:18px;">
+                                            <button onclick="this.previousElementSibling.stepUp()" style="background:#f7fafc;border:1px solid #e2e8f0;padding:5px 9px;cursor:pointer; font-size:18px;">+</button>
                                         </div>
                                     </div>
-                                    <button onclick="ajouterAuPanier(\'%s\',%d)" class="add-to-cart-btn" style="color:white;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:8px; width: fit-content">
+                                    <button onclick="ajouterAuPanier(\'%s\',%d)" class="add-to-cart-btn" style="color:white;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;font-weight:bold;display:flex;align-items:center;gap:8px; width: fit-content; font-size:18px">
                                         <svg width="16" height="16" viewBox="0 0 24 24" style="stroke:currentColor;fill:none;stroke-width:2"><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
                                         Ajouter au panier
                                     </button>
