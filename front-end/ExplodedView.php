@@ -1060,7 +1060,8 @@ if (!function_exists('addVueEclateeTab')) {
                     .product-info-row span { min-width: 100%; }
                     .product-info-row.quantity-row span { min-width: unset; }
                     .actions-container { flex-direction: column; align-items: stretch; gap: 15px; }
-                    .scroll-container { max-height: 500px; }
+                    .scroll-container { max-height: 700px; }
+                    .add-to-cart-btn { padding: 10px 15px !important; }
                 }
             </style>';
 
