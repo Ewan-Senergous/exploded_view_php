@@ -1025,9 +1025,9 @@ if (!function_exists('addVueEclateeTab')) {
 
             $jsonData = json_decode(preg_replace(WHITESPACE_PATTERN, ' ', $cross_ref), true);
 
-            $output = '<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">';
+            $output = '<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;600&display=swap" rel="stylesheet">';
             $output .= '<style>
-                * { font-family: "Poppins", sans-serif; font-size: 18px; }
+                * { font-family: "Lato" }
                 .position-word, .position-number { display: inline; }
                 .special .position-word, .special .position-number { display: none; }
                 .add-to-cart-btn { background-color: #e31206 !important; transition: background-color .3s; }
@@ -1229,7 +1229,7 @@ if (!function_exists('addVueEclateeTab')) {
                     data: {action: \'get_cart_count\', timestamp: new Date().getTime()},
                     cache: false,
                     success: function(count) {
-                        jQuery(\'span.account-cart-items\').text(count);
+                        jQuery(\'span.account-cart-items\').html(\'&nbsp;&nbsp;:&nbsp;&nbsp;\' + count);
                     }
                 });
             }
@@ -1351,6 +1351,8 @@ if (!function_exists('addVueEclateeTab')) {
         </style>';
         
         echo '<div class="woocommerce-Tabs-panel woocommerce-Tabs-panel--vue-eclatee panel entry-content wc-tab" id="tab-vue-eclatee" role="tabpanel" aria-labelledby="tab-title-vue-eclatee" style="display: block;">';
+
+        echo '<h2 style="margin-bottom: 1rem;">Vue Éclatée</h2>';
         
         echo '<div class="vue-eclatee-container" style="display: flex; gap: 15px; align-items: flex-start;">';
         
@@ -1375,4 +1377,3 @@ if (!function_exists('addVueEclateeTab')) {
     
     add_filter('woocommerce_product_tabs', 'addVueEclateeTab');
 }
-
